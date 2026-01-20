@@ -1,0 +1,171 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Election Information Portal">
+  <section class="hero">
+    <div class="container">
+      <h1>Your Trusted Source for Election Information</h1>
+      <p class="subtitle">Learn about the voting process and get to know the candidates running in your area.</p>
+      <div class="cta-buttons">
+        <a href="/voting-process" class="btn btn-primary">How to Vote</a>
+        <a href="/candidates" class="btn btn-secondary">View Candidates</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="info-section">
+    <div class="container">
+      <h2>Important Dates</h2>
+      <div class="dates-grid">
+        <div class="date-card">
+          <h3>Voter Registration Deadline</h3>
+          <p class="date">October 15, 2024</p>
+          <p>Last day to register to vote in the upcoming election.</p>
+        </div>
+        <div class="date-card">
+          <h3>Early Voting Begins</h3>
+          <p class="date">October 25, 2024</p>
+          <p>Cast your ballot early at designated locations.</p>
+        </div>
+        <div class="date-card">
+          <h3>Election Day</h3>
+          <p class="date">November 5, 2024</p>
+          <p>Polls open from 7:00 AM to 8:00 PM.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-section">
+    <div class="container">
+      <h2>About This Site</h2>
+      <p>
+        This is a non-partisan, community-driven resource to help voters make informed decisions. 
+        All candidate information is submitted by the candidates themselves or gathered from public sources.
+      </p>
+      <p>
+        Want to help? This site is open source. You can contribute candidate information, fix errors, 
+        or suggest improvements on <a href="https://github.com/yourusername/election-info-site">GitHub</a>.
+      </p>
+    </div>
+  </section>
+
+  <style>
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 4rem 0;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      opacity: 0.95;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: inline-block;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: white;
+      color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 4px 12px rgba(255,255,255,0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .info-section, .about-section {
+      padding: 3rem 0;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .dates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .date-card {
+      background: var(--bg-alt);
+      padding: 2rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border);
+    }
+
+    .date-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    .date {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0.5rem 0;
+      color: var(--text);
+    }
+
+    .about-section {
+      background: var(--bg-alt);
+    }
+
+    .about-section p {
+      max-width: 800px;
+      margin: 1rem auto;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 1.75rem;
+      }
+
+      .subtitle {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</Layout>

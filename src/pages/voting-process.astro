@@ -1,0 +1,154 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout 
+  title="How to Vote - Election Information Portal"
+  description="Learn about the voting process, registration, and important deadlines"
+>
+  <div class="container page-content">
+    <h1>How to Vote</h1>
+    
+    <section>
+      <h2>1. Register to Vote</h2>
+      <p>
+        To vote in the upcoming election, you must be registered. The registration deadline is 
+        <strong>October 15, 2024</strong>.
+      </p>
+      <ul>
+        <li>You must be 18 years old by Election Day</li>
+        <li>You must be a resident of the district where you're registering</li>
+        <li>Register online, by mail, or in person at your local election office</li>
+      </ul>
+      <p><a href="#" class="link-button">Check Your Registration Status →</a></p>
+    </section>
+
+    <section>
+      <h2>2. Know Your Voting Options</h2>
+      
+      <div class="options-grid">
+        <div class="option-card">
+          <h3>Vote Early</h3>
+          <p><strong>October 25 - November 3, 2024</strong></p>
+          <p>Visit any early voting location during the early voting period. No excuse needed.</p>
+        </div>
+
+        <div class="option-card">
+          <h3>Vote by Mail</h3>
+          <p><strong>Request by October 28, 2024</strong></p>
+          <p>Request an absentee ballot and mail it back. Must be postmarked by Election Day.</p>
+        </div>
+
+        <div class="option-card">
+          <h3>Vote on Election Day</h3>
+          <p><strong>November 5, 2024 (7 AM - 8 PM)</strong></p>
+          <p>Vote at your assigned polling location. Bring a valid photo ID.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>3. What to Bring</h2>
+      <p>When you go to vote, bring one of the following forms of ID:</p>
+      <ul>
+        <li>Driver's license or state ID card</li>
+        <li>US passport</li>
+        <li>Military ID</li>
+        <li>Tribal ID</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>4. Find Your Polling Location</h2>
+      <p>
+        Your polling location is assigned based on your address. Enter your address below to 
+        find where you should vote.
+      </p>
+      <p><a href="#" class="link-button">Find My Polling Place →</a></p>
+    </section>
+
+    <section>
+      <h2>Need Help?</h2>
+      <p>
+        If you have questions about voting or need assistance, contact your local election office 
+        or call the voter hotline at <strong>1-800-XXX-VOTE</strong>.
+      </p>
+    </section>
+  </div>
+
+  <style>
+    .page-content {
+      padding: 3rem 0;
+      max-width: 900px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      color: var(--primary);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    p, ul {
+      margin-bottom: 1rem;
+      font-size: 1.05rem;
+    }
+
+    ul {
+      padding-left: 2rem;
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .option-card {
+      background: var(--bg-alt);
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border);
+    }
+
+    .option-card p {
+      margin-bottom: 0.5rem;
+    }
+
+    .link-button {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      margin-top: 1rem;
+      transition: background 0.2s;
+    }
+
+    .link-button:hover {
+      background: var(--primary-dark);
+      text-decoration: none;
+    }
+  </style>
+</Layout>

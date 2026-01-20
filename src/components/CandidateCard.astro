@@ -1,0 +1,97 @@
+---
+interface Props {
+  name: string;
+  position: string;
+  party?: string;
+  image?: string;
+  slug: string;
+}
+
+const { name, position, party, image, slug } = Astro.props;
+---
+
+<article class="candidate-card">
+  <a href={`/candidate/${slug}`}>
+    <div class="card-image">
+      {image ? (
+        <img src={image} alt={name} />
+      ) : (
+        <div class="placeholder-image">
+          <span>{name.charAt(0)}</span>
+        </div>
+      )}
+    </div>
+    <div class="card-content">
+      <h3>{name}</h3>
+      <p class="position">{position}</p>
+      {party && <p class="party">{party}</p>}
+    </div>
+  </a>
+</article>
+
+<style>
+  .candidate-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+
+  .candidate-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+  }
+
+  .candidate-card a {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .card-image {
+    aspect-ratio: 3/2;
+    overflow: hidden;
+    background: var(--bg-alt);
+  }
+
+  .card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .placeholder-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    font-size: 3rem;
+    font-weight: 700;
+  }
+
+  .card-content {
+    padding: 1.25rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+    color: var(--text);
+  }
+
+  .position {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .party {
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+</style>

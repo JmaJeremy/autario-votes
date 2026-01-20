@@ -1,0 +1,99 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import CandidateCard from '../../components/CandidateCard.astro';
+
+const candidates = await getCollection('candidates');
+const sortedCandidates = candidates.sort((a, b) => (a.data.order || 999) - (b.data.order || 999));
+---
+
+<Layout title="Candidates - Election Information Portal">
+  <div class="container page-content">
+    <h1>Candidates</h1>
+    <p class="intro">
+      Learn about the candidates running for office in your area. Click on any candidate 
+      to read their full biography, platform, and contact information.
+    </p>
+
+    <div class="candidates-grid">
+      {sortedCandidates.map((candidate) => (
+        <CandidateCard
+          name={candidate.data.name}
+          position={candidate.data.position}
+          party={candidate.data.party}
+          image={candidate.data.image}
+          slug={candidate.slug}
+        />
+      ))}
+    </div>
+
+    <div class="contribute-box">
+      <h2>Is a candidate missing?</h2>
+      <p>
+        This site is community-maintained. If you'd like to add a candidate or update 
+        information, please submit a pull request on GitHub.
+      </p>
+      <a href="https://github.com/yourusername/election-info-site" class="btn">Contribute on GitHub</a>
+    </div>
+  </div>
+
+  <style>
+    .page-content {
+      padding: 3rem 0;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+    .intro {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      margin-bottom: 3rem;
+      max-width: 800px;
+    }
+
+    .candidates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .contribute-box {
+      background: var(--bg-alt);
+      padding: 2rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border);
+      text-align: center;
+      margin-top: 4rem;
+    }
+
+    .contribute-box h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .contribute-box p {
+      margin-bottom: 1.5rem;
+      color: var(--text-light);
+    }
+
+    .btn {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--primary-dark);
+      text-decoration: none;
+    }
+  </style>
+</Layout>

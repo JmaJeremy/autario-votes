@@ -1,0 +1,84 @@
+---
+const currentPath = Astro.url.pathname;
+---
+
+<header>
+  <div class="container">
+    <nav>
+      <a href="/" class="logo">
+        <span class="logo-icon">🗳️</span>
+        <span>Election Info 2024</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/" class:list={{ active: currentPath === '/' }}>Home</a></li>
+        <li><a href="/voting-process" class:list={{ active: currentPath === '/voting-process' }}>How to Vote</a></li>
+        <li><a href="/candidates" class:list={{ active: currentPath.startsWith('/candidates') }}>Candidates</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  header {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .logo:hover {
+    text-decoration: none;
+    opacity: 0.8;
+  }
+
+  .logo-icon {
+    font-size: 1.5rem;
+  }
+
+  .nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+  }
+
+  .nav-links a {
+    color: var(--text);
+    font-weight: 500;
+    padding: 0.5rem 0;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.2s;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active {
+    text-decoration: none;
+    border-bottom-color: var(--primary);
+  }
+
+  @media (max-width: 640px) {
+    .nav-links {
+      gap: 1rem;
+    }
+  }
+</style>
