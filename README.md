@@ -1,4 +1,4 @@
-# Autario Votes
+# Autario Votes - Simcoe County
 
 A community-maintained resource for Simcoe County municipal elections created by the Simcoelandic Autarian Development Corporation.
 
@@ -8,13 +8,13 @@ This site is open source. You can contribute candidate information, fix errors, 
 If you are tech-savvy, feel free to submit a pull request on GitHub. If not, just send us an email
 at webmaster@autvotes.ca and we'll add the information for you.
 
-To add a candidate, just take a look at /src/content/candidates/ and use one of the existing files as a template.
+To add a candidate, just take a look at [/src/content/candidates](https://github.com/JmaJeremy/autario-votes/tree/main/src/content/candidates) and use one of the existing files as a template.
 
-If you have a photo, you can upload it to /src/assets/images/candidates/ and reference it in the candidate file.
+If you have a photo, you can upload it to [/public/images/candidates](https://github.com/JmaJeremy/autario-votes/tree/main/public/images/candidates) and reference it in the candidate file.
 
 ## License
 
-This site is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+This site is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](LICENSE.md).
 
 ## Privacy Policy
 

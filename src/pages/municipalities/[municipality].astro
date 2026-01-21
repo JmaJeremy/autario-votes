@@ -1,4 +1,5 @@
 ---
+import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import CandidateCard from '../../components/CandidateCard.astro';
@@ -48,15 +49,20 @@ export async function getStaticPaths() {
     params: { municipality: municipality.toLowerCase().replace(/\s+/g, '-') },
     props: { 
       municipality,
-      candidates: candidates.sort((a, b) => (a.data.order || 999) - (b.data.order || 999))
+      candidates: candidates.sort((a: CollectionEntry<'candidates'>, b: CollectionEntry<'candidates'>) => (a.data.order || 999) - (b.data.order || 999))
     },
   }));
+}
+
+interface Props {
+  municipality: string;
+  candidates: CollectionEntry<'candidates'>[];
 }
 
 const { municipality, candidates } = Astro.props;
 ---
 
-<Layout title={`${municipality} Candidates - Autario Votes`}>
+<Layout title={`${municipality} Candidates - Autario Votes - Simcoe County`}>
   <div class="container page-content">
     <h1>{municipality}</h1>
     
@@ -68,7 +74,7 @@ const { municipality, candidates } = Astro.props;
         </p>
 
         <div class="candidates-grid">
-          {candidates.map((candidate) => (
+          {candidates.map((candidate: CollectionEntry<'candidates'>) => (
             <CandidateCard
               name={candidate.data.name}
               position={candidate.data.position}

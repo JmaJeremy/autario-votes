@@ -28,7 +28,7 @@ const { Content } = await candidate.render();
       </div>
       <div class="candidate-info">
         <h1>{candidate.data.name}</h1>
-        <p class="position">{candidate.data.position}</p>
+        <p class="position">{candidate.data.position}, <a href={`/municipalities/${candidate.data.municipality.toLowerCase().replace(/\s+/g, '-')}`}>{candidate.data.municipality}</a></p>
         {candidate.data.party && <p class="party">{candidate.data.party}</p>}
         
         <div class="contact-links">
