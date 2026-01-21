@@ -2,6 +2,7 @@
 name: Jane Smith
 position: City Council - District 3
 party: Independent
+municipality: Orillia
 website: https://janesmith.com
 email: contact@janesmith.com
 image: /images/candidates/jane-smith.jpg

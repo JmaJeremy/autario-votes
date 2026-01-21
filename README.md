@@ -1,43 +1,21 @@
-# Astro Starter Kit: Minimal
+# Autario Votes
 
-```sh
-npm create astro@latest -- --template minimal
-```
+A community-maintained resource for Simcoe County municipal elections created by the Simcoelandic Autarian Development Corporation.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Contributing
 
-## 🚀 Project Structure
+This site is open source. You can contribute candidate information, fix errors, or suggest improvements.
+If you are tech-savvy, feel free to submit a pull request on GitHub. If not, just send us an email
+at webmaster@autvotes.ca and we'll add the information for you.
 
-Inside of your Astro project, you'll see the following folders and files:
+To add a candidate, just take a look at /src/content/candidates/ and use one of the existing files as a template.
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+If you have a photo, you can upload it to /src/assets/images/candidates/ and reference it in the candidate file.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## License
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+This site is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Privacy Policy
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+This site does not collect any personal information. It is a static site that is generated using Astro and deployed to Cloudflare Pages.

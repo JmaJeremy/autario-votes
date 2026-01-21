@@ -6,6 +6,7 @@ const candidatesCollection = defineCollection({
     name: z.string(),
     position: z.string(),
     party: z.string().optional(),
+    municipality: z.string(),
     website: z.string().url().optional(),
     email: z.string().email().optional(),
     phone: z.string().optional(),

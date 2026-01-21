@@ -1,0 +1,165 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import CandidateCard from '../../components/CandidateCard.astro';
+
+export async function getStaticPaths() {
+  const candidates = await getCollection('candidates');
+  
+  // List of all Simcoe County municipalities
+  const allMunicipalities = [
+    'Adjala-Tosorontio',
+    'Bradford West Gwillimbury',
+    'Clearview',
+    'Collingwood',
+    'Essa',
+    'Innisfil',
+    'Midland',
+    'New Tecumseth',
+    'Oro-Medonte',
+    'Penetanguishene',
+    'Ramara',
+    'Severn',
+    'Springwater',
+    'Tay',
+    'Tiny',
+    'Wasaga Beach',
+    // Separated municipalities
+    'Barrie',
+    'Orillia'
+  ];
+  
+  const municipalityMap = new Map();
+  
+  // Initialize all municipalities with empty arrays
+  allMunicipalities.forEach(municipality => {
+    municipalityMap.set(municipality, []);
+  });
+  
+  // Add candidates to their respective municipalities
+  candidates.forEach((candidate) => {
+    const municipality = candidate.data.municipality;
+    if (municipalityMap.has(municipality)) {
+      municipalityMap.get(municipality).push(candidate);
+    }
+  });
+  
+  return Array.from(municipalityMap.entries()).map(([municipality, candidates]) => ({
+    params: { municipality: municipality.toLowerCase().replace(/\s+/g, '-') },
+    props: { 
+      municipality,
+      candidates: candidates.sort((a, b) => (a.data.order || 999) - (b.data.order || 999))
+    },
+  }));
+}
+
+const { municipality, candidates } = Astro.props;
+---
+
+<Layout title={`${municipality} Candidates - Autario Votes`}>
+  <div class="container page-content">
+    <h1>{municipality}</h1>
+    
+    {candidates.length > 0 ? (
+      <>
+        <p class="intro">
+          View all candidates running for office in {municipality}. Click on any candidate 
+          to read their full biography, platform, and contact information.
+        </p>
+
+        <div class="candidates-grid">
+          {candidates.map((candidate) => (
+            <CandidateCard
+              name={candidate.data.name}
+              position={candidate.data.position}
+              party={candidate.data.party}
+              municipality={candidate.data.municipality}
+              image={candidate.data.image}
+              slug={candidate.slug}
+            />
+          ))}
+        </div>
+      </>
+    ) : (
+      <div class="no-candidates">
+        <p class="no-candidates-message">
+          No candidates have been added for {municipality} yet. Check back soon as we update 
+          candidate information for the upcoming election.
+        </p>
+        <p class="contribute-note">
+          Know of a candidate running in {municipality}? This site is community-maintained. 
+          You can help by submitting candidate information on GitHub.
+        </p>
+      </div>
+    )}
+
+    <div class="back-link">
+      <a href="/municipalities">← Back to All Municipalities</a>
+    </div>
+  </div>
+
+  <style>
+    .page-content {
+      padding: 3rem 0;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+    .intro {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      margin-bottom: 3rem;
+      max-width: 800px;
+    }
+
+    .candidates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .back-link {
+      margin-top: 3rem;
+    }
+
+    .back-link a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .back-link a:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    .no-candidates {
+      background: var(--bg-alt);
+      padding: 3rem 2rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border);
+      text-align: center;
+      margin-bottom: 3rem;
+      max-width: 700px;
+    }
+
+    .no-candidates-message {
+      font-size: 1.2rem;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .contribute-note {
+      color: var(--text-light);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+  </style>
+</Layout>

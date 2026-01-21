@@ -2,6 +2,7 @@
 name: John Doe
 position: Mayor
 party: Progressive Party
+municipality: Barrie
 website: https://johndoeformayor.com
 email: info@johndoeformayor.com
 image: /images/candidates/john-doe.jpg

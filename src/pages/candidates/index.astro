@@ -7,7 +7,7 @@ const candidates = await getCollection('candidates');
 const sortedCandidates = candidates.sort((a, b) => (a.data.order || 999) - (b.data.order || 999));
 ---
 
-<Layout title="Candidates - Election Information Portal">
+<Layout title="Candidates - Autario Votes">
   <div class="container page-content">
     <h1>Candidates</h1>
     <p class="intro">
@@ -21,6 +21,7 @@ const sortedCandidates = candidates.sort((a, b) => (a.data.order || 999) - (b.da
           name={candidate.data.name}
           position={candidate.data.position}
           party={candidate.data.party}
+          municipality={candidate.data.municipality}
           image={candidate.data.image}
           slug={candidate.slug}
         />
@@ -33,7 +34,7 @@ const sortedCandidates = candidates.sort((a, b) => (a.data.order || 999) - (b.da
         This site is community-maintained. If you'd like to add a candidate or update 
         information, please submit a pull request on GitHub.
       </p>
-      <a href="https://github.com/yourusername/election-info-site" class="btn">Contribute on GitHub</a>
+      <a href="https://github.com/JmaJeremy/autario-votes" class="btn">Contribute on GitHub</a>
     </div>
   </div>
 
