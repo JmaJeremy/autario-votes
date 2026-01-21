@@ -11,7 +11,6 @@ const candidatesCollection = defineCollection({
     email: z.string().email().optional(),
     phone: z.string().optional(),
     image: z.string().optional(),
-    order: z.number().optional(),
   }),
 });
 

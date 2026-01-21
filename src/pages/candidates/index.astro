@@ -4,7 +4,11 @@ import Layout from '../../layouts/Layout.astro';
 import CandidateCard from '../../components/CandidateCard.astro';
 
 const candidates = await getCollection('candidates');
-const sortedCandidates = candidates.sort((a, b) => (a.data.order || 999) - (b.data.order || 999));
+const sortedCandidates = candidates.sort((a, b) => {
+  const lastNameA = a.data.name.split(' ').pop() || '';
+  const lastNameB = b.data.name.split(' ').pop() || '';
+  return lastNameA.localeCompare(lastNameB);
+});
 ---
 
 <Layout title="Candidates - Autario Votes - Simcoe County">

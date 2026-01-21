@@ -49,7 +49,11 @@ export async function getStaticPaths() {
     params: { municipality: municipality.toLowerCase().replace(/\s+/g, '-') },
     props: { 
       municipality,
-      candidates: candidates.sort((a: CollectionEntry<'candidates'>, b: CollectionEntry<'candidates'>) => (a.data.order || 999) - (b.data.order || 999))
+      candidates: candidates.sort((a: CollectionEntry<'candidates'>, b: CollectionEntry<'candidates'>) => {
+        const lastNameA = a.data.name.split(' ').pop() || '';
+        const lastNameB = b.data.name.split(' ').pop() || '';
+        return lastNameA.localeCompare(lastNameB);
+      })
     },
   }));
 }

@@ -6,7 +6,6 @@ website: https://www.orillia.ca/en/city-hall/meetyourmayor.aspx#Mayor-Don-McIsaa
 email: dmcisaac@orillia.ca
 phone: 705-955-2615
 image: /images/candidates/don-mcisaac.jpg
-order: 1
 ---
 
 Orillia is my home. 
