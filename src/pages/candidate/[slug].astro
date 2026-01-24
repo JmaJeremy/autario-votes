@@ -27,7 +27,10 @@ const { Content } = await candidate.render();
         )}
       </div>
       <div class="candidate-info">
-        <h1>{candidate.data.name}</h1>
+        <div class="name-row">
+          <h1>{candidate.data.name}</h1>
+          {candidate.data.incumbent && <span class="incumbent-tag">Incumbent</span>}
+        </div>
         <p class="position">{candidate.data.position}, <a href={`/municipalities/${candidate.data.municipality.toLowerCase().replace(/\s+/g, '-')}`}>{candidate.data.municipality}</a></p>
         {candidate.data.party && <p class="party">{candidate.data.party}</p>}
         
@@ -100,10 +103,30 @@ const { Content } = await candidate.render();
       font-weight: 700;
     }
 
+    .name-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.5rem;
+    }
+
     .candidate-info h1 {
       font-size: 2.5rem;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0;
       color: var(--text);
+    }
+
+    .incumbent-tag {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: var(--primary);
+      color: white;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: 0.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .position {

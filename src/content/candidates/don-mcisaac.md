@@ -6,6 +6,7 @@ website: https://www.orillia.ca/en/city-hall/meetyourmayor.aspx#Mayor-Don-McIsaa
 email: dmcisaac@orillia.ca
 phone: 705-955-2615
 image: /images/candidates/don-mcisaac.jpg
+incumbent: true
 ---
 
 Orillia is my home. 
@@ -28,4 +29,5 @@ I will be focused on the things that matter the most to you such as finding a do
 
 I am always ready to listen and look forward to hearing your ideas and concerns.
 
+My wife Cindi and I are looking forward to meeting each and every one of you in the future.
 My wife Cindi and I are looking forward to meeting each and every one of you in the future.
