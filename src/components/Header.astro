@@ -14,6 +14,7 @@ const currentPath = Astro.url.pathname;
         <li><a href="/voting-process" class:list={{ active: currentPath === '/voting-process' }}>How to Vote</a></li>
         <li><a href="/municipalities" class:list={{ active: currentPath.startsWith('/municipalities') }}>Municipalities</a></li>
         <li><a href="/candidates" class:list={{ active: currentPath.startsWith('/candidates') }}>Candidates</a></li>
+        <li><a href="/information" class:list={{ active: currentPath.startsWith('/information') }}>General Information</a></li>
       </ul>
     </nav>
   </div>
