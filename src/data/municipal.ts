@@ -1,3 +1,5 @@
+import { sortByLastName } from '../utils/sorting';
+
 export interface MunicipalOfficial {
   name: string;
   title: string;
@@ -9,13 +11,27 @@ export interface MunicipalOfficial {
 
 export interface ElectionCandidate {
   name: string;
-  office: string; // 'Mayor' | 'Deputy Mayor' | 'Councillor'
+  office: string; // 'Mayor' | 'Deputy Mayor' | 'Councillor' | 'Trustee'
+  ward?: string;
+  category?: 'mayor' | 'councillor' | 'trustee';
   votes?: number;
   votePercent?: string;
   elected?: boolean;
   incumbent?: boolean;
+  acclaimed?: boolean;
   slug?: string;
   note?: string;
+  email?: string;
+  phone?: string;
+}
+
+export interface ElectionRace {
+  title: string;
+  category: 'mayor' | 'councillor' | 'trustee';
+  ward?: string;
+  seats?: number;
+  description?: string;
+  candidates: ElectionCandidate[];
 }
 
 export interface MunicipalityDetail {
@@ -27,6 +43,7 @@ export interface MunicipalityDetail {
   deputyMayor?: MunicipalOfficial;
   councillors: MunicipalOfficial[];
   candidates: ElectionCandidate[];
+  races?: ElectionRace[];
   schoolBoardTrustees: {
     scdsb: string;
     smcdsb: string;
@@ -254,6 +271,331 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
     candidates: [
       { name: 'Steve Clarke', office: 'Mayor', incumbent: false, slug: 'steve-clarke', note: 'Former 2-Term Mayor of Orillia (2014–2022)' },
       { name: 'Whitney Joy Smith', office: 'Mayor', incumbent: false, slug: 'whitney-joy-smith', note: 'Sitting Ward 1 Councillor' }
+    ],
+    races: [
+      {
+        title: 'Head of Council (Mayor)',
+        category: 'mayor',
+        seats: 1,
+        description: 'Chief Executive Officer and Head of Council for the City of Orillia. 1 to be elected at-large.',
+        candidates: [
+          {
+            name: 'Steve Clarke',
+            office: 'Mayor',
+            incumbent: false,
+            slug: 'steve-clarke',
+            email: 'clarke4orillia@gmail.com',
+            phone: '705-329-8153',
+            note: 'Former 2-Term Mayor of Orillia (2014–2022)'
+          },
+          {
+            name: 'Whitney Joy Smith',
+            office: 'Mayor',
+            incumbent: false,
+            slug: 'whitney-joy-smith',
+            email: 'whitney@whitneyformayor.ca',
+            phone: '705-408-4871',
+            note: 'Sitting Ward 1 Councillor'
+          }
+        ]
+      },
+      {
+        title: 'Ward 1 Councillor',
+        category: 'councillor',
+        ward: 'Ward 1',
+        seats: 2,
+        description: 'Represents Ward 1 on Orillia City Council. 2 councillors to be elected.',
+        candidates: [
+          {
+            name: 'Joseph Bat',
+            office: 'Ward 1 Councillor',
+            incumbent: false,
+            email: 'josephbatward1@gmail.com',
+            phone: '705-955-2477'
+          },
+          {
+            name: 'Krystal Brooks',
+            office: 'Ward 1 Councillor',
+            incumbent: false,
+            email: 'krystalbrooks1234@gmail.com',
+            phone: '705-619-5321'
+          },
+          {
+            name: 'David Campbell',
+            office: 'Ward 1 Councillor',
+            incumbent: true,
+            email: 'david@votedavidcampbell.com',
+            phone: '705-327-2662',
+            note: 'Sitting Ward 1 Councillor'
+          },
+          {
+            name: 'Gracii Partridge',
+            office: 'Ward 1 Councillor',
+            incumbent: false,
+            email: 'GraciiforWard1@gmail.com',
+            phone: '705-955-2515'
+          },
+          {
+            name: 'Michael Shortt',
+            office: 'Ward 1 Councillor',
+            incumbent: false,
+            email: 'michael@michaelforwardone.ca',
+            phone: '705-279-5307'
+          },
+          {
+            name: 'Ellen Wolper',
+            office: 'Ward 1 Councillor',
+            incumbent: false,
+            email: 'eworillia@gmail.com',
+            phone: '705-323-3912'
+          }
+        ]
+      },
+      {
+        title: 'Ward 2 Councillor',
+        category: 'councillor',
+        ward: 'Ward 2',
+        seats: 2,
+        description: 'Represents Ward 2 on Orillia City Council. 2 councillors to be elected.',
+        candidates: [
+          {
+            name: 'Mason Ainsworth',
+            office: 'Ward 2 Councillor',
+            incumbent: false,
+            slug: 'mason-ainsworth',
+            email: 'voteainsworth@gmail.com',
+            phone: '705-826-4967',
+            note: 'Former Ward 3 Councillor (2014–2022)'
+          },
+          {
+            name: 'Ralph Cipolla',
+            office: 'Ward 2 Councillor',
+            incumbent: true,
+            email: 'cipolla@orilliapronet.com',
+            phone: '705-323-2466',
+            note: 'Sitting Ward 2 Councillor'
+          },
+          {
+            name: 'Shandell Conboy',
+            office: 'Ward 2 Councillor',
+            incumbent: false,
+            email: 'shandell.orillia@gmail.com',
+            phone: '905-767-8173'
+          },
+          {
+            name: 'Rob Kloostra',
+            office: 'Ward 2 Councillor',
+            incumbent: false,
+            slug: 'rob-kloostra',
+            email: 'robkloostra@gmail.com',
+            phone: '705-330-5525',
+            note: 'Former Ward 1 Councillor (2014–2022)'
+          },
+          {
+            name: 'Luke Leatherdale',
+            office: 'Ward 2 Councillor',
+            incumbent: true,
+            email: 'luke4orillia@gmail.com',
+            note: 'Sitting Ward 2 Councillor'
+          },
+          {
+            name: 'Duncan McDonald',
+            office: 'Ward 2 Councillor',
+            incumbent: false,
+            email: 'duncanmcdonaldward2@gmail.com',
+            phone: '705-989-8183'
+          }
+        ]
+      },
+      {
+        title: 'Ward 3 Councillor',
+        category: 'councillor',
+        ward: 'Ward 3',
+        seats: 2,
+        description: 'Represents Ward 3 on Orillia City Council. 2 councillors to be elected.',
+        candidates: [
+          {
+            name: 'Jeff Czetwerzuk',
+            office: 'Ward 3 Councillor',
+            incumbent: true,
+            email: 'jeff4orillia@gmail.com',
+            phone: '705-345-6418',
+            note: 'Sitting Ward 3 Councillor'
+          },
+          {
+            name: 'Jay Fallis',
+            office: 'Ward 3 Councillor',
+            incumbent: true,
+            email: 'fallisforthefuture@gmail.com',
+            phone: '705-801-8683',
+            note: 'Sitting Ward 3 Councillor'
+          },
+          {
+            name: 'Alasoba Kelsy-Braide',
+            office: 'Ward 3 Councillor',
+            incumbent: false,
+            email: 'vote4alasoba@orilliaward3.ca',
+            phone: '705-345-8006'
+          },
+          {
+            name: 'James Krawecki',
+            office: 'Ward 3 Councillor',
+            incumbent: false,
+            email: 'james@james4ward3orillia.ca',
+            phone: '705-905-8295'
+          }
+        ]
+      },
+      {
+        title: 'Ward 4 Councillor',
+        category: 'councillor',
+        ward: 'Ward 4',
+        seats: 2,
+        description: 'Represents Ward 4 on Orillia City Council. 2 councillors to be elected.',
+        candidates: [
+          {
+            name: 'Danny Borzellino',
+            office: 'Ward 4 Councillor',
+            incumbent: false,
+            email: 'dannypinoborzellino@gmail.com',
+            phone: '705-500-5530'
+          },
+          {
+            name: 'Doug Cooper',
+            office: 'Ward 4 Councillor',
+            incumbent: false,
+            email: 'dougcooper4council@gmail.com',
+            phone: '705-955-7475'
+          },
+          {
+            name: 'JL Durnford',
+            office: 'Ward 4 Councillor',
+            incumbent: true,
+            email: 'jl@votejl.ca',
+            phone: '705-238-7493',
+            note: 'Sitting Ward 4 Councillor'
+          },
+          {
+            name: 'Andrew Hill',
+            office: 'Ward 4 Councillor',
+            incumbent: false,
+            email: 'hill4ward4@gmail.com',
+            phone: '705-330-9122'
+          },
+          {
+            name: 'Tyler Holmes',
+            office: 'Ward 4 Councillor',
+            incumbent: false,
+            email: 'tylerholmes4ward4@gmail.com',
+            phone: '705-500-9966'
+          },
+          {
+            name: 'Tim Lauer',
+            office: 'Ward 4 Councillor',
+            incumbent: true,
+            email: 'tlauer@sympatico.ca',
+            phone: '705-325-5812',
+            note: 'Sitting Ward 4 Councillor'
+          },
+          {
+            name: 'Maggie Ostler Best',
+            office: 'Ward 4 Councillor',
+            incumbent: false,
+            email: 'maggieostlerbest@gmail.com',
+            phone: '705-619-2877'
+          },
+          {
+            name: 'Paula Stewart',
+            office: 'Ward 4 Councillor',
+            incumbent: false,
+            email: 'paula4orillia@gmail.com',
+            phone: '705-623-0164'
+          }
+        ]
+      },
+      {
+        title: 'School Board Trustee – Simcoe County District School Board (SCDSB)',
+        category: 'trustee',
+        seats: 1,
+        description: 'English Public school board trustee representing City of Orillia, Township of Ramara, and Township of Severn. 1 to be elected.',
+        candidates: [
+          {
+            name: 'Jodi M. Lloyd',
+            office: 'Trustee, English Public',
+            incumbent: true,
+            slug: 'jodi-lloyd',
+            email: 'jodilloyd4trustee@gmail.com',
+            phone: '705-955-4964',
+            note: 'Sitting SCDSB Board Chair & Trustee'
+          },
+          {
+            name: 'Stephen Sopher',
+            office: 'Trustee, English Public',
+            incumbent: false
+          }
+        ]
+      },
+      {
+        title: 'School Board Trustee – Simcoe Muskoka Catholic District School Board (SMCDSB)',
+        category: 'trustee',
+        seats: 1,
+        description: 'English Catholic school board trustee representing Orillia, Ramara, Severn, and Oro-Medonte. 1 trustee to be elected.',
+        candidates: [
+          {
+            name: 'J. Timothy Jackson',
+            office: 'Trustee, English Catholic',
+            incumbent: false,
+            acclaimed: true,
+            email: 'jacksonjtim@gmail.com',
+            phone: '705-259-3518',
+            note: 'Acclaimed Trustee (Elected Unopposed)'
+          }
+        ]
+      },
+      {
+        title: 'School Board Trustee – Conseil scolaire Viamonde (CSV)',
+        category: 'trustee',
+        seats: 1,
+        description: 'French Public school board trustee for Simcoe, Muskoka, and Grey (Secteur 5). 1 trustee to be elected.',
+        candidates: [
+          {
+            name: 'Rachael Golem',
+            office: 'Conseillère, French Public',
+            incumbent: false,
+            email: 'allo@rachaelgolem.ca',
+            phone: '647-884-3044'
+          },
+          {
+            name: 'Eric Lapointe',
+            office: 'Conseiller, French Public',
+            incumbent: false,
+            email: 'ericrlapointe@yahoo.com',
+            phone: '705-241-8909'
+          }
+        ]
+      },
+      {
+        title: 'School Board Trustee – Conseil scolaire catholique MonAvenir',
+        category: 'trustee',
+        seats: 1,
+        description: 'French Catholic school board trustee for Simcoe and Muskoka (Secteur 4). 1 trustee to be elected.',
+        candidates: [
+          {
+            name: 'Donald Blais',
+            office: 'Conseiller, French Catholic',
+            incumbent: false,
+            email: 'donaldblais@bell.net',
+            phone: '416-688-4009'
+          },
+          {
+            name: 'Innocent Legrand',
+            office: 'Conseiller, French Catholic',
+            incumbent: false,
+            email: 'WNIBL@yahoo.com',
+            phone: '416-779-4241'
+          }
+        ]
+      }
     ],
     schoolBoardTrustees: {
       scdsb: 'Jodi Lloyd (Orillia, Ramara, Severn)',
@@ -925,3 +1267,258 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
     }
   }
 ];
+
+export function buildMunicipalityRaces(m: MunicipalityDetail): ElectionRace[] {
+  if (m.races && m.races.length > 0) {
+    return m.races;
+  }
+
+  const races: ElectionRace[] = [];
+
+  // 1. Head of Council (Mayor) Race
+  const mayoralCandidates = (m.candidates || []).filter(c => c.office === 'Mayor' || !c.office);
+  const mayorPool: ElectionCandidate[] = mayoralCandidates.length > 0
+    ? mayoralCandidates.map(c => ({
+        ...c,
+        category: 'mayor' as const,
+        slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+      }))
+    : [
+        {
+          name: m.mayor.name,
+          office: 'Mayor',
+          category: 'mayor' as const,
+          incumbent: true,
+          slug: m.mayor.slug || m.mayor.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+          email: m.mayor.email,
+          phone: m.mayor.phone,
+          note: `Sitting Mayor of ${m.name}`
+        }
+      ];
+
+  races.push({
+    title: 'Head of Council (Mayor)',
+    category: 'mayor',
+    seats: 1,
+    description: `Chief executive officer and head of council for ${m.name}. 1 to be elected.`,
+    candidates: sortByLastName(mayorPool)
+  });
+
+  // 2. Deputy Mayor Race (if applicable and elected at-large)
+  if (m.deputyMayor) {
+    const isWardCouncillor = m.councillors.some(c => c.name === m.deputyMayor?.name && c.ward && c.ward !== 'At-Large');
+    if (!isWardCouncillor) {
+      const dmCandidates = (m.candidates || []).filter(c => c.office === 'Deputy Mayor');
+      const dmPool: ElectionCandidate[] = dmCandidates.length > 0
+        ? dmCandidates.map(c => ({
+            ...c,
+            category: 'councillor' as const,
+            slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+          }))
+        : [
+            {
+              name: m.deputyMayor.name,
+              office: 'Deputy Mayor',
+              category: 'councillor' as const,
+              incumbent: true,
+              slug: m.deputyMayor.slug || m.deputyMayor.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+              email: m.deputyMayor.email,
+              phone: m.deputyMayor.phone,
+              note: `Sitting Deputy Mayor & Simcoe County Council representative`
+            }
+          ];
+
+      races.push({
+        title: 'Deputy Mayor',
+        category: 'councillor',
+        seats: 1,
+        description: `Deputy Head of Council and Simcoe County Council representative for ${m.name}. 1 to be elected.`,
+        candidates: sortByLastName(dmPool)
+      });
+    }
+  }
+
+  // 3. Councillor Races (Ward-based or At-Large)
+  const hasWards = m.councillors.some(c => c.ward && c.ward !== 'At-Large');
+  if (hasWards) {
+    const wardMap = new Map<string, MunicipalOfficial[]>();
+    m.councillors.forEach(c => {
+      const w = c.ward || 'At-Large';
+      if (!wardMap.has(w)) wardMap.set(w, []);
+      wardMap.get(w)!.push(c);
+    });
+
+    for (const [ward, clist] of wardMap.entries()) {
+      const wardCandidates = (m.candidates || []).filter(c => c.ward === ward || c.office === `${ward} Councillor`);
+      const pool: ElectionCandidate[] = wardCandidates.length > 0
+        ? wardCandidates.map(c => ({
+            ...c,
+            category: 'councillor' as const,
+            ward,
+            slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+          }))
+        : clist.map(c => ({
+            name: c.name,
+            office: `${ward} Councillor`,
+            category: 'councillor' as const,
+            ward,
+            incumbent: true,
+            slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+            email: c.email,
+            phone: c.phone,
+            note: `Sitting ${c.title || `${ward} Councillor`}`
+          }));
+
+      races.push({
+        title: `${ward} Councillor`,
+        category: 'councillor',
+        ward,
+        seats: clist.length,
+        description: `Represents ${ward} on ${m.name} Council. ${clist.length} to be elected.`,
+        candidates: sortByLastName(pool)
+      });
+    }
+  } else {
+    // At-Large council race
+    const councillorCandidates = (m.candidates || []).filter(c => c.category === 'councillor' || c.office === 'Councillor');
+    const pool: ElectionCandidate[] = councillorCandidates.length > 0
+      ? councillorCandidates.map(c => ({
+          ...c,
+          category: 'councillor' as const,
+          ward: 'At-Large',
+          slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+        }))
+      : m.councillors.map(c => ({
+          name: c.name,
+          office: 'Councillor',
+          category: 'councillor' as const,
+          ward: 'At-Large',
+          incumbent: true,
+          slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+          email: c.email,
+          phone: c.phone,
+          note: `Sitting Town Councillor`
+        }));
+
+    races.push({
+      title: 'Municipal Councillor (At-Large)',
+      category: 'councillor',
+      ward: 'At-Large',
+      seats: m.councillors.length,
+      description: `Represents ${m.name} at-large on Municipal Council. ${m.councillors.length} to be elected.`,
+      candidates: sortByLastName(pool)
+    });
+  }
+
+  // 4. School Board Trustee Races
+  if (m.schoolBoardTrustees) {
+    // English Public (SCDSB)
+    if (m.schoolBoardTrustees.scdsb) {
+      const parts = m.schoolBoardTrustees.scdsb.split(/,(?=\s*[A-Z])/);
+      parts.forEach(part => {
+        const trimmed = part.trim();
+        const match = trimmed.match(/^([^(]+)(?:\(([^)]+)\))?/);
+        const name = match ? match[1].trim() : trimmed;
+        const zone = match && match[2] ? match[2].trim() : m.name;
+        const trusteeSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+        races.push({
+          title: `School Board Trustee – SCDSB (${zone})`,
+          category: 'trustee',
+          seats: 1,
+          description: `English Public school board trustee representing ${zone}. 1 to be elected.`,
+          candidates: [
+            {
+              name,
+              office: 'Trustee',
+              category: 'trustee',
+              incumbent: true,
+              slug: trusteeSlug,
+              note: `Sitting SCDSB Trustee (${zone})`
+            }
+          ]
+        });
+      });
+    }
+
+    // English Catholic (SMCDSB)
+    if (m.schoolBoardTrustees.smcdsb) {
+      const parts = m.schoolBoardTrustees.smcdsb.split(/,(?=\s*[A-Z])/);
+      parts.forEach(part => {
+        const trimmed = part.trim();
+        const match = trimmed.match(/^([^(]+)(?:\(([^)]+)\))?/);
+        const name = match ? match[1].trim() : trimmed;
+        const zone = match && match[2] ? match[2].trim() : m.name;
+        const trusteeSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+        races.push({
+          title: `School Board Trustee – SMCDSB (${zone})`,
+          category: 'trustee',
+          seats: 1,
+          description: `English Catholic school board trustee representing ${zone}. 1 to be elected.`,
+          candidates: [
+            {
+              name,
+              office: 'Trustee',
+              category: 'trustee',
+              incumbent: true,
+              slug: trusteeSlug,
+              note: `Sitting SMCDSB Trustee (${zone})`
+            }
+          ]
+        });
+      });
+    }
+
+    // French Public (CSV)
+    if (m.schoolBoardTrustees.viamonde) {
+      const name = m.schoolBoardTrustees.viamonde.split('(')[0].trim();
+      races.push({
+        title: 'School Board Trustee – CSV (French Public)',
+        category: 'trustee',
+        seats: 1,
+        description: `Conseil scolaire Viamonde trustee covering Sector 5 (Simcoe County). 1 to be elected.`,
+        candidates: [
+          {
+            name,
+            office: 'Trustee',
+            category: 'trustee',
+            incumbent: true,
+            slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+            note: 'Sitting CSV Trustee (Région de Simcoe, Muskoka et Grey)'
+          }
+        ]
+      });
+    }
+
+    // French Catholic (MonAvenir)
+    if (m.schoolBoardTrustees.monavenir) {
+      const name = m.schoolBoardTrustees.monavenir.split('(')[0].trim();
+      races.push({
+        title: 'School Board Trustee – MonAvenir (French Catholic)',
+        category: 'trustee',
+        seats: 1,
+        description: `Conseil scolaire catholique MonAvenir trustee covering Sector 4 (Simcoe County). 1 to be elected.`,
+        candidates: [
+          {
+            name,
+            office: 'Trustee',
+            category: 'trustee',
+            incumbent: true,
+            slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+            note: 'Sitting MonAvenir Trustee (Région de Simcoe et Muskoka)'
+          }
+        ]
+      });
+    }
+  }
+
+  return races;
+}
+
+// Automatically populate races for every municipality
+MUNICIPALITIES_DATA.forEach(m => {
+  if (!m.races || m.races.length === 0) {
+    m.races = buildMunicipalityRaces(m);
+  }
+});

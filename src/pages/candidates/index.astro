@@ -30,32 +30,85 @@ const municipalIncumbents = sortedMayoralCandidates.filter(c => c.incumbent);
 const municipalChallengers = sortedMayoralCandidates.filter(c => !c.incumbent);
 
 // Councillors pool, sorted by last name
-const sortedCouncillors = sortByLastName(
-  MUNICIPALITIES_DATA.flatMap(m => 
-    m.councillors.map(c => ({
-      name: c.name,
-      title: c.title,
-      municipality: m.name,
-      munSlug: m.slug,
-      ward: c.ward || 'At-Large',
-      type: 'Councillor'
-    }))
-  )
-);
+const rawCouncillors = MUNICIPALITIES_DATA.flatMap(m => {
+  const councillorRaces = (m.races || []).filter(r => r.category === 'councillor');
+  if (councillorRaces.length > 0) {
+    return councillorRaces.flatMap(r =>
+      r.candidates.map(c => ({
+        name: c.name,
+        title: r.title,
+        municipality: m.name,
+        munSlug: m.slug,
+        ward: c.ward || r.ward || 'At-Large',
+        type: 'Councillor',
+        incumbent: Boolean(c.incumbent),
+        acclaimed: Boolean(c.acclaimed),
+        note: c.note,
+        email: c.email,
+        phone: c.phone
+      }))
+    );
+  }
+  return (m.councillors || []).map(c => ({
+    name: c.name,
+    title: c.title,
+    municipality: m.name,
+    munSlug: m.slug,
+    ward: c.ward || 'At-Large',
+    type: 'Councillor',
+    incumbent: false,
+    acclaimed: false,
+    note: undefined,
+    email: undefined,
+    phone: undefined
+  }));
+});
+const sortedCouncillors = sortByLastName(rawCouncillors);
 
 // Trustees pool, sorted by last name
-const sortedTrustees = sortByLastName(
-  SCHOOL_BOARDS.flatMap(b =>
-    b.trustees.map(t => ({
+const trusteeCandidatesFromRaces = MUNICIPALITIES_DATA.flatMap(m => {
+  const trusteeRaces = (m.races || []).filter(r => r.category === 'trustee');
+  return trusteeRaces.flatMap(r =>
+    r.candidates.map(c => ({
+      name: c.name,
+      title: r.title,
+      boardName: r.title.replace(/^School Board Trustee\s*–?\s*/i, ''),
+      boardType: r.title.includes('Catholic') ? 'Catholic' : 'Public',
+      area: m.name,
+      type: 'Trustee',
+      incumbent: Boolean(c.incumbent),
+      acclaimed: Boolean(c.acclaimed),
+      note: c.note,
+      email: c.email,
+      phone: c.phone,
+      municipality: m.name,
+      munSlug: m.slug
+    }))
+  );
+});
+
+const trusteeCandidatesNames = new Set(trusteeCandidatesFromRaces.map(t => t.name.toLowerCase()));
+const trusteesFromBoards = SCHOOL_BOARDS.flatMap(b =>
+  b.trustees
+    .filter(t => !trusteeCandidatesNames.has(t.trustee.toLowerCase()))
+    .map(t => ({
       name: t.trustee,
       title: `Trustee (${b.name})`,
       boardName: b.name,
       boardType: b.type,
       area: t.area,
-      type: 'Trustee'
+      type: 'Trustee',
+      incumbent: false,
+      acclaimed: false,
+      note: undefined,
+      email: undefined,
+      phone: undefined,
+      municipality: undefined,
+      munSlug: undefined
     }))
-  )
 );
+
+const sortedTrustees = sortByLastName([...trusteeCandidatesFromRaces, ...trusteesFromBoards]);
 
 // Provincial candidate pool, sorted by last name
 const sortedProvincialCandidates = sortByLastName(
@@ -96,12 +149,12 @@ const provincialChallengers = sortedProvincialCandidates.filter(c => !c.incumben
       <!-- Category Tabs for Municipal Directory -->
       <section class="section-block">
         <div class="role-tabs" id="mun-role-tabs">
-          <button class="tab-btn active" data-tab="mayors">👑 Mayors & Candidates ({sortedMayoralCandidates.length})</button>
+          <button class="tab-btn active" data-tab="mayors">👑 Head of Council (Mayor) ({sortedMayoralCandidates.length})</button>
           <button class="tab-btn" data-tab="councillors">👥 Municipal Councillors ({sortedCouncillors.length})</button>
           <button class="tab-btn" data-tab="trustees">🎒 School Board Trustees ({sortedTrustees.length})</button>
         </div>
 
-        <!-- 1. MAYORS & CANDIDATES TAB CONTENT -->
+        <!-- 1. HEAD OF COUNCIL (MAYOR) TAB CONTENT -->
         <div class="tab-content active" id="tab-mayors">
           <div class="status-filters-wrap" id="mun-status-filters">
             <span class="filter-label">Filter Pool:</span>
@@ -161,10 +214,16 @@ const provincialChallengers = sortedProvincialCandidates.filter(c => !c.incumben
               <div class="official-card">
                 <div class="card-avatar avatar-councillor">{c.name.charAt(0)}</div>
                 <div class="card-meta">
-                  <span class="badge-ward">{c.ward}</span>
+                  <div class="status-row">
+                    {c.incumbent && <span class="flag-incumbent">Incumbent</span>}
+                    {c.acclaimed && <span class="flag-acclaimed">Acclaimed</span>}
+                    <span class="badge-ward">{c.ward}</span>
+                  </div>
                   <h3>{c.name}</h3>
                   <p class="title-text">{c.title}</p>
                   <p class="sub-text">📍 <a href={`/municipalities/${c.munSlug}`}>{c.municipality}</a></p>
+                  {c.note && <p class="cand-note-text">{c.note}</p>}
+                  <a href={`/municipalities/${c.munSlug}`} class="link-profile">View Municipality Races →</a>
                 </div>
               </div>
             ))}
@@ -185,7 +244,11 @@ const provincialChallengers = sortedProvincialCandidates.filter(c => !c.incumben
                     <div class="card-avatar avatar-trustee">🎒</div>
                   )}
                   <div class="card-meta">
-                    <span class="badge-board">{t.boardType}</span>
+                    <div class="status-row">
+                      {t.incumbent && <span class="flag-incumbent">Incumbent</span>}
+                      {t.acclaimed && <span class="flag-acclaimed">Acclaimed</span>}
+                      <span class="badge-board">{t.boardType}</span>
+                    </div>
                     <h3>
                       {matchedTrustee ? (
                         <a href={`/candidate/${trusteeSlug}`}>{t.name}</a>
@@ -194,10 +257,13 @@ const provincialChallengers = sortedProvincialCandidates.filter(c => !c.incumben
                       )}
                     </h3>
                     <p class="title-text">{t.boardName}</p>
-                    <p class="sub-text">📍 <strong>Zone:</strong> {t.area}</p>
-                    {matchedTrustee && (
+                    <p class="sub-text">📍 <strong>Zone / Area:</strong> {t.area}</p>
+                    {t.note && <p class="cand-note-text">{t.note}</p>}
+                    {matchedTrustee ? (
                       <a href={`/candidate/${trusteeSlug}`} class="link-profile">View Trustee Profile →</a>
-                    )}
+                    ) : t.munSlug ? (
+                      <a href={`/municipalities/${t.munSlug}`} class="link-profile">View Municipality Races →</a>
+                    ) : null}
                   </div>
                 </div>
               );
@@ -587,6 +653,18 @@ const provincialChallengers = sortedProvincialCandidates.filter(c => !c.incumben
   /* Subtle dark orange incumbent flag */
   .flag-incumbent {
     background: #c2410c; /* dark orange */
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+
+  .flag-acclaimed {
+    background: #0284c7;
     color: white;
     font-size: 0.7rem;
     font-weight: 700;
