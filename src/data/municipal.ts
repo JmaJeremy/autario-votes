@@ -1,3 +1,5 @@
+import { sortByLastName } from '../utils/sorting';
+
 export interface MunicipalOfficial {
   name: string;
   title: string;
@@ -1265,3 +1267,258 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
     }
   }
 ];
+
+export function buildMunicipalityRaces(m: MunicipalityDetail): ElectionRace[] {
+  if (m.races && m.races.length > 0) {
+    return m.races;
+  }
+
+  const races: ElectionRace[] = [];
+
+  // 1. Head of Council (Mayor) Race
+  const mayoralCandidates = (m.candidates || []).filter(c => c.office === 'Mayor' || !c.office);
+  const mayorPool: ElectionCandidate[] = mayoralCandidates.length > 0
+    ? mayoralCandidates.map(c => ({
+        ...c,
+        category: 'mayor' as const,
+        slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+      }))
+    : [
+        {
+          name: m.mayor.name,
+          office: 'Mayor',
+          category: 'mayor' as const,
+          incumbent: true,
+          slug: m.mayor.slug || m.mayor.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+          email: m.mayor.email,
+          phone: m.mayor.phone,
+          note: `Sitting Mayor of ${m.name}`
+        }
+      ];
+
+  races.push({
+    title: 'Head of Council (Mayor)',
+    category: 'mayor',
+    seats: 1,
+    description: `Chief executive officer and head of council for ${m.name}. 1 to be elected.`,
+    candidates: sortByLastName(mayorPool)
+  });
+
+  // 2. Deputy Mayor Race (if applicable and elected at-large)
+  if (m.deputyMayor) {
+    const isWardCouncillor = m.councillors.some(c => c.name === m.deputyMayor?.name && c.ward && c.ward !== 'At-Large');
+    if (!isWardCouncillor) {
+      const dmCandidates = (m.candidates || []).filter(c => c.office === 'Deputy Mayor');
+      const dmPool: ElectionCandidate[] = dmCandidates.length > 0
+        ? dmCandidates.map(c => ({
+            ...c,
+            category: 'councillor' as const,
+            slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+          }))
+        : [
+            {
+              name: m.deputyMayor.name,
+              office: 'Deputy Mayor',
+              category: 'councillor' as const,
+              incumbent: true,
+              slug: m.deputyMayor.slug || m.deputyMayor.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+              email: m.deputyMayor.email,
+              phone: m.deputyMayor.phone,
+              note: `Sitting Deputy Mayor & Simcoe County Council representative`
+            }
+          ];
+
+      races.push({
+        title: 'Deputy Mayor',
+        category: 'councillor',
+        seats: 1,
+        description: `Deputy Head of Council and Simcoe County Council representative for ${m.name}. 1 to be elected.`,
+        candidates: sortByLastName(dmPool)
+      });
+    }
+  }
+
+  // 3. Councillor Races (Ward-based or At-Large)
+  const hasWards = m.councillors.some(c => c.ward && c.ward !== 'At-Large');
+  if (hasWards) {
+    const wardMap = new Map<string, MunicipalOfficial[]>();
+    m.councillors.forEach(c => {
+      const w = c.ward || 'At-Large';
+      if (!wardMap.has(w)) wardMap.set(w, []);
+      wardMap.get(w)!.push(c);
+    });
+
+    for (const [ward, clist] of wardMap.entries()) {
+      const wardCandidates = (m.candidates || []).filter(c => c.ward === ward || c.office === `${ward} Councillor`);
+      const pool: ElectionCandidate[] = wardCandidates.length > 0
+        ? wardCandidates.map(c => ({
+            ...c,
+            category: 'councillor' as const,
+            ward,
+            slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+          }))
+        : clist.map(c => ({
+            name: c.name,
+            office: `${ward} Councillor`,
+            category: 'councillor' as const,
+            ward,
+            incumbent: true,
+            slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+            email: c.email,
+            phone: c.phone,
+            note: `Sitting ${c.title || `${ward} Councillor`}`
+          }));
+
+      races.push({
+        title: `${ward} Councillor`,
+        category: 'councillor',
+        ward,
+        seats: clist.length,
+        description: `Represents ${ward} on ${m.name} Council. ${clist.length} to be elected.`,
+        candidates: sortByLastName(pool)
+      });
+    }
+  } else {
+    // At-Large council race
+    const councillorCandidates = (m.candidates || []).filter(c => c.category === 'councillor' || c.office === 'Councillor');
+    const pool: ElectionCandidate[] = councillorCandidates.length > 0
+      ? councillorCandidates.map(c => ({
+          ...c,
+          category: 'councillor' as const,
+          ward: 'At-Large',
+          slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+        }))
+      : m.councillors.map(c => ({
+          name: c.name,
+          office: 'Councillor',
+          category: 'councillor' as const,
+          ward: 'At-Large',
+          incumbent: true,
+          slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+          email: c.email,
+          phone: c.phone,
+          note: `Sitting Town Councillor`
+        }));
+
+    races.push({
+      title: 'Municipal Councillor (At-Large)',
+      category: 'councillor',
+      ward: 'At-Large',
+      seats: m.councillors.length,
+      description: `Represents ${m.name} at-large on Municipal Council. ${m.councillors.length} to be elected.`,
+      candidates: sortByLastName(pool)
+    });
+  }
+
+  // 4. School Board Trustee Races
+  if (m.schoolBoardTrustees) {
+    // English Public (SCDSB)
+    if (m.schoolBoardTrustees.scdsb) {
+      const parts = m.schoolBoardTrustees.scdsb.split(/,(?=\s*[A-Z])/);
+      parts.forEach(part => {
+        const trimmed = part.trim();
+        const match = trimmed.match(/^([^(]+)(?:\(([^)]+)\))?/);
+        const name = match ? match[1].trim() : trimmed;
+        const zone = match && match[2] ? match[2].trim() : m.name;
+        const trusteeSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+        races.push({
+          title: `School Board Trustee – SCDSB (${zone})`,
+          category: 'trustee',
+          seats: 1,
+          description: `English Public school board trustee representing ${zone}. 1 to be elected.`,
+          candidates: [
+            {
+              name,
+              office: 'Trustee',
+              category: 'trustee',
+              incumbent: true,
+              slug: trusteeSlug,
+              note: `Sitting SCDSB Trustee (${zone})`
+            }
+          ]
+        });
+      });
+    }
+
+    // English Catholic (SMCDSB)
+    if (m.schoolBoardTrustees.smcdsb) {
+      const parts = m.schoolBoardTrustees.smcdsb.split(/,(?=\s*[A-Z])/);
+      parts.forEach(part => {
+        const trimmed = part.trim();
+        const match = trimmed.match(/^([^(]+)(?:\(([^)]+)\))?/);
+        const name = match ? match[1].trim() : trimmed;
+        const zone = match && match[2] ? match[2].trim() : m.name;
+        const trusteeSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+        races.push({
+          title: `School Board Trustee – SMCDSB (${zone})`,
+          category: 'trustee',
+          seats: 1,
+          description: `English Catholic school board trustee representing ${zone}. 1 to be elected.`,
+          candidates: [
+            {
+              name,
+              office: 'Trustee',
+              category: 'trustee',
+              incumbent: true,
+              slug: trusteeSlug,
+              note: `Sitting SMCDSB Trustee (${zone})`
+            }
+          ]
+        });
+      });
+    }
+
+    // French Public (CSV)
+    if (m.schoolBoardTrustees.viamonde) {
+      const name = m.schoolBoardTrustees.viamonde.split('(')[0].trim();
+      races.push({
+        title: 'School Board Trustee – CSV (French Public)',
+        category: 'trustee',
+        seats: 1,
+        description: `Conseil scolaire Viamonde trustee covering Sector 5 (Simcoe County). 1 to be elected.`,
+        candidates: [
+          {
+            name,
+            office: 'Trustee',
+            category: 'trustee',
+            incumbent: true,
+            slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+            note: 'Sitting CSV Trustee (Région de Simcoe, Muskoka et Grey)'
+          }
+        ]
+      });
+    }
+
+    // French Catholic (MonAvenir)
+    if (m.schoolBoardTrustees.monavenir) {
+      const name = m.schoolBoardTrustees.monavenir.split('(')[0].trim();
+      races.push({
+        title: 'School Board Trustee – MonAvenir (French Catholic)',
+        category: 'trustee',
+        seats: 1,
+        description: `Conseil scolaire catholique MonAvenir trustee covering Sector 4 (Simcoe County). 1 to be elected.`,
+        candidates: [
+          {
+            name,
+            office: 'Trustee',
+            category: 'trustee',
+            incumbent: true,
+            slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+            note: 'Sitting MonAvenir Trustee (Région de Simcoe et Muskoka)'
+          }
+        ]
+      });
+    }
+  }
+
+  return races;
+}
+
+// Automatically populate races for every municipality
+MUNICIPALITIES_DATA.forEach(m => {
+  if (!m.races || m.races.length === 0) {
+    m.races = buildMunicipalityRaces(m);
+  }
+});

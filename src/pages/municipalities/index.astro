@@ -27,29 +27,32 @@ const municipalitiesList = MUNICIPALITIES_DATA.map(m => {
       <h1>Simcoe County Municipalities Directory</h1>
       <p class="intro">
         Simcoe County consists of 16 towns and townships plus 2 separated cities (Barrie and Orillia). 
-        Explore local municipal leadership—including Mayors, Councillors, County Council representatives, and School Board Trustees—as well as their corresponding provincial ridings.
+        Explore candidate pools, contested ward races, voting methods, and school board trustee elections for each municipality.
       </p>
     </div>
 
-    <!-- County Council Leadership Banner (Municipal View) -->
+    <!-- 2026 Municipal Election Directory Banner (Municipal View) -->
     <div class="municipal-only county-header-banner">
       <div class="ch-left">
-        <span class="badge-county">Regional County Governance</span>
-        <h2>County of Simcoe Council</h2>
+        <span class="badge-county">Simcoe County 2026 Municipal Vote</span>
+        <h2>18 Municipalities • General Election October 26, 2026</h2>
         <p>
-          Governed by 32 members: the Mayors and Deputy Mayors from the 16 member municipalities (excluding Barrie & Orillia).
+          Electors across Simcoe County's 18 local municipalities will cast ballots for Head of Council (Mayor), Deputy Mayor, Ward Councillors, and School Board Trustees.
         </p>
         <div class="wardens-row">
           <div class="warden-badge">
-            <strong>Warden:</strong> {COUNTY_COUNCIL.warden.name} (Mayor of {COUNTY_COUNCIL.warden.mayorOf})
+            <strong>Election Date:</strong> Monday, October 26, 2026
           </div>
           <div class="warden-badge">
-            <strong>Deputy Warden:</strong> {COUNTY_COUNCIL.deputyWarden.name} (Mayor of {COUNTY_COUNCIL.deputyWarden.mayorOf})
+            <strong>Nominations Close:</strong> August 21, 2026 (2:00 PM)
+          </div>
+          <div class="warden-badge">
+            <strong>Term of Office:</strong> 2026–2030 (4 Years)
           </div>
         </div>
       </div>
       <div class="ch-right">
-        <a href="#municipal-table" class="btn btn-secondary">Browse All 18 Councils ↓</a>
+        <a href="#municipal-table" class="btn btn-secondary">Explore All 18 Municipalities ↓</a>
       </div>
     </div>
 
@@ -57,8 +60,8 @@ const municipalitiesList = MUNICIPALITIES_DATA.map(m => {
       <div class="list-section">
         <!-- Municipal View Heading -->
         <div class="municipal-only table-headline">
-          <h2>Local Municipal Councils & Mayors</h2>
-          <p class="sub">Head of council, councillors, and school board trustee allocations for each municipality.</p>
+          <h2>2026 Municipal Candidate Races & Voting Systems</h2>
+          <p class="sub">Contested candidate races, council seats, and official voting methods for each municipality.</p>
         </div>
 
         <!-- Provincial View Heading -->
@@ -73,7 +76,7 @@ const municipalitiesList = MUNICIPALITIES_DATA.map(m => {
               <tr>
                 <th>Municipality</th>
                 <!-- Municipal View Columns -->
-                <th class="municipal-only">Mayor (Head of Council)</th>
+                <th class="municipal-only">2026 Contested Races</th>
                 <th class="municipal-only">Council Size</th>
                 <th class="municipal-only">Voting Method</th>
                 <!-- Provincial View Columns -->
@@ -95,8 +98,8 @@ const municipalitiesList = MUNICIPALITIES_DATA.map(m => {
 
                   <!-- Municipal Mode Data -->
                   <td class="municipal-only">
-                    <strong class="mayor-name">{mun.mayor.name}</strong>
-                    {mun.deputyMayor && <span class="deputy-text">Deputy: {mun.deputyMayor.name}</span>}
+                    <strong class="races-count">{mun.races?.length || 0} Contested Races</strong>
+                    <span class="races-summary">Mayor, {mun.deputyMayor ? 'Deputy Mayor, ' : ''}{mun.councillors.length} Councillors, Trustees</span>
                   </td>
                   <td class="municipal-only">
                     <span class="council-badge">{mun.councillors.length + (mun.deputyMayor ? 2 : 1)} Seats</span>
@@ -118,7 +121,7 @@ const municipalitiesList = MUNICIPALITIES_DATA.map(m => {
 
                   <td>
                     <a href={`/municipalities/${mun.slug}`} class="btn-sm">
-                      Full Details →
+                      View Races →
                     </a>
                   </td>
                 </tr>
@@ -314,12 +317,13 @@ const municipalitiesList = MUNICIPALITIES_DATA.map(m => {
     line-height: 1.3;
   }
 
-  .mayor-name {
+  .races-count {
     display: block;
     color: var(--text);
+    font-weight: 700;
   }
 
-  .deputy-text {
+  .races-summary {
     display: block;
     font-size: 0.8rem;
     color: var(--text-light);

@@ -68,8 +68,8 @@ const totalCandidatesCount = electionRaces.reduce((sum, r) => sum + r.candidates
 ---
 
 <Layout 
-  title={`${munDetail.name} - Municipal Council, Trustees & Provincial Riding - Autario Votes`}
-  description={`Local government details for ${munDetail.name}: Mayor ${munDetail.mayor.name}, councillors, school board trustees, and provincial riding ${mapData.ridingName}.`}
+  title={`${munDetail.name} - 2026 Municipal Election Candidate Races & Voting - Autario Votes`}
+  description={`Candidate pools, contested ward races, voting methods, and school board trustee elections for ${munDetail.name}.`}
 >
   <div class="container page-content">
     <nav class="breadcrumbs">
@@ -80,7 +80,7 @@ const totalCandidatesCount = electionRaces.reduce((sum, r) => sum + r.candidates
       <span class="eyebrow">{munDetail.type} • Simcoe County</span>
       <h1>{munDetail.name}</h1>
       <p class="intro municipal-only">
-        Explore municipal council leadership, Mayor, Ward Councillors, local School Board Trustees, and 2026 election voting methods for {munDetail.name}.
+        Official candidate pools, contested ward races, voting methods, and school board trustee elections for the October 26, 2026 municipal vote in {munDetail.name}.
       </p>
       <p class="intro provincial-only">
         Explore provincial representation in Queen's Park, riding boundaries, sitting MPPs, and local municipal councils for {munDetail.name}.
@@ -89,25 +89,33 @@ const totalCandidatesCount = electionRaces.reduce((sum, r) => sum + r.candidates
 
     <!-- Quick Stats Cards Row -->
     <div class="stats-row">
-      <div class="stat-box">
-        <span class="stat-label">Mayor / Head of Council</span>
-        <strong>{munDetail.mayor.name}</strong>
-      </div>
-      <div class="stat-box">
-        <span class="stat-label">Council Composition</span>
-        <strong>{munDetail.councillors.length + (munDetail.deputyMayor ? 2 : 1)} Total Members</strong>
+      <div class="stat-box municipal-only">
+        <span class="stat-label">Next Election Day</span>
+        <strong>Monday, October 26, 2026</strong>
       </div>
       <div class="stat-box municipal-only">
         <span class="stat-label">Voting Method</span>
         <strong>{munDetail.votingMethod.startsWith('Hybrid') ? 'Hybrid (Net/Paper)' : (munDetail.votingMethod.includes('Internet') ? 'Internet & Phone' : 'Paper Ballots')}</strong>
       </div>
+      <div class="stat-box municipal-only">
+        <span class="stat-label">Contested Races</span>
+        <strong>{electionRaces.length} Contested Offices</strong>
+      </div>
+      <div class="stat-box municipal-only">
+        <span class="stat-label">Candidate Pool</span>
+        <strong>{totalCandidatesCount} Candidates</strong>
+      </div>
+      <div class="stat-box municipal-only">
+        <span class="stat-label">Electorate</span>
+        <strong>~{munDetail.electorEstimate.toLocaleString()} Electors</strong>
+      </div>
       <div class="stat-box provincial-only">
         <span class="stat-label">Provincial Riding</span>
         <strong><a href={`/ridings/${mapData.ridingSlug}`}>{mapData.ridingName}</a></strong>
       </div>
-      <div class="stat-box">
-        <span class="stat-label">Next Municipal Election</span>
-        <strong>October 26, 2026</strong>
+      <div class="stat-box provincial-only">
+        <span class="stat-label">Next Provincial Vote</span>
+        <strong>Scheduled General Election</strong>
       </div>
     </div>
 
@@ -244,46 +252,24 @@ const totalCandidatesCount = electionRaces.reduce((sum, r) => sum + r.candidates
         })}
       </div>
 
-      <!-- Current Council Reference (2022–2026 Expiring Term) -->
+      <!-- Outgoing Council Reference (2022–2026 Term) -->
       <div class="current-council-ref">
-        <h3 class="ref-title">Current Council Reference (2022–2026 Term)</h3>
-        <p class="ref-sub">Sitting local officials serving until the new council term begins on November 15, 2026:</p>
+        <h3 class="ref-title">Outgoing Council Term Reference (2022–2026)</h3>
+        <p class="ref-sub">Sitting municipal officials serving until the new 2026–2030 term takes office on November 15, 2026:</p>
 
-        <!-- Mayor & Deputy Mayor Feature -->
-        <div class="mayors-feature-grid">
-          <div class="mayor-card">
-            <div class="avatar-box avatar-mayor">
-              <span>{munDetail.mayor.name.charAt(0)}</span>
-            </div>
-            <div class="mayor-info">
-              <span class="role-chip">Sitting Head of Council</span>
-              <h3>{munDetail.mayor.name}</h3>
-              <p class="role-desc">{munDetail.mayor.title}</p>
-              {munDetail.mayor.phone && <p class="contact-p">📞 {munDetail.mayor.phone}</p>}
-              {munDetail.mayor.email && <p class="contact-p">✉️ {munDetail.mayor.email}</p>}
-            </div>
+        <div class="councillors-grid">
+          <div class="councillor-chip">
+            <span class="ward-tag">Mayor</span>
+            <h4>{munDetail.mayor.name}</h4>
+            <p>{munDetail.mayor.title}</p>
           </div>
-
           {munDetail.deputyMayor && (
-            <div class="mayor-card">
-              <div class="avatar-box avatar-deputy">
-                <span>{munDetail.deputyMayor.name.charAt(0)}</span>
-              </div>
-              <div class="mayor-info">
-                <span class="role-chip chip-deputy">Sitting Deputy Head of Council</span>
-                <h3>{munDetail.deputyMayor.name}</h3>
-                <p class="role-desc">{munDetail.deputyMayor.title}</p>
-                <p class="contact-p">Represents {munDetail.name} at County of Simcoe Council</p>
-              </div>
+            <div class="councillor-chip">
+              <span class="ward-tag">Deputy Mayor</span>
+              <h4>{munDetail.deputyMayor.name}</h4>
+              <p>{munDetail.deputyMayor.title}</p>
             </div>
           )}
-        </div>
-      </div>
-
-      <!-- Ward Councillors Grid -->
-      <div class="councillors-block">
-        <h3>Municipal Councillors</h3>
-        <div class="councillors-grid">
           {munDetail.councillors.map(c => (
             <div class="councillor-chip">
               <span class="ward-tag">{c.ward || 'At-Large'}</span>
