@@ -1,7 +1,10 @@
 ---
 name: Don McIsaac
-position: Mayor
+position: Mayor of Orillia
+riding: Simcoe North
 municipality: Orillia
+level: municipal
+elected: true
 website: https://www.orillia.ca/en/city-hall/meetyourmayor.aspx#Mayor-Don-McIsaac
 email: dmcisaac@orillia.ca
 phone: 705-955-2615

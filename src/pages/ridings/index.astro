@@ -1,0 +1,480 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { RIDINGS } from '../../data/ridings';
+---
+
+<Layout 
+  title="Provincial Ridings - Simcoe County - Autario Votes"
+  description="Explore the 5 provincial electoral districts (ridings) covering Simcoe County, current MPPs, and election results."
+>
+  <div class="container page-content">
+    <div class="header-section">
+      <span class="eyebrow">Legislative Assembly of Ontario</span>
+      <h1>Simcoe County Provincial Ridings</h1>
+      <p class="intro">
+        Simcoe County and its surrounding communities are represented in the Ontario Legislature by 
+        <strong>5 provincial electoral districts (ridings)</strong>. In the 44th Parliament of Ontario, 
+        all 5 seats are represented by members of the <strong>Progressive Conservative Party of Ontario</strong>, 
+        including several key cabinet ministers.
+      </p>
+    </div>
+
+    <!-- Summary Statistics Bar -->
+    <div class="stats-bar">
+      <div class="stat-card">
+        <span class="stat-num">5</span>
+        <span class="stat-label">Provincial Ridings</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">5 / 5</span>
+        <span class="stat-label">PC Majority Representation</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">3</span>
+        <span class="stat-label">Cabinet Ministers</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">Sept 2026</span>
+        <span class="stat-label">Most Recent By-Election</span>
+      </div>
+    </div>
+
+    <!-- Ridings Grid -->
+    <div class="ridings-grid">
+      {RIDINGS.map((riding) => (
+        <article class="riding-card">
+          <div class="riding-card-header">
+            <span class="badge-pc">Progressive Conservative</span>
+            <h2><a href={`/ridings/${riding.slug}`}>{riding.name}</a></h2>
+            <p class="riding-desc">{riding.description}</p>
+          </div>
+
+          <div class="mpp-box">
+            <div class="mpp-avatar">
+              <span>{riding.mpp.charAt(0)}</span>
+            </div>
+            <div class="mpp-meta">
+              <span class="meta-label">Current Sitting MPP</span>
+              <h3><a href={`/candidate/${riding.mppSlug}`}>{riding.mpp}</a></h3>
+              <p class="mpp-role">{riding.role}</p>
+            </div>
+          </div>
+
+          <div class="recent-results-mini">
+            <div class="results-header">
+              <span class="election-title">{riding.recentElection.title} ({riding.recentElection.date})</span>
+              <span class="turnout-tag">Turnout: {riding.recentElection.turnout}</span>
+            </div>
+            
+            <div class="candidates-mini-list">
+              {riding.recentElection.results.slice(0, 3).map((res) => (
+                <div class="candidate-row">
+                  <div class="cand-name">
+                    <span class={`dot dot-${res.partyCode.toLowerCase()}`}></span>
+                    <strong>{res.candidate}</strong> 
+                    <span class="cand-party">({res.partyCode})</span>
+                    {res.elected && <span class="elected-pill">✓ Won</span>}
+                  </div>
+                  <div class="cand-bar-wrap">
+                    <div class="cand-bar-fill" style={`width: ${res.percent}; background-color: ${res.elected ? '#334155' : '#94a3b8'};`}></div>
+                    <span class="cand-pct">{res.percent}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class="municipalities-tags">
+            <span class="tags-label">Municipalities included:</span>
+            <div class="tags-wrap">
+              {riding.municipalities.map((m) => (
+                <span class="m-tag">{m}</span>
+              ))}
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <a href={`/ridings/${riding.slug}`} class="view-details-link">
+              View Detailed Riding Profile & Full Results →
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <!-- Quick Municipality Lookup Callout -->
+    <div class="lookup-banner">
+      <div class="banner-content">
+        <h2>Unsure which provincial riding you live in?</h2>
+        <p>
+          Because riding boundaries differ from municipal boundaries, some towns and cities (like Barrie and Oro-Medonte) 
+          are split between multiple ridings.
+        </p>
+      </div>
+      <div class="banner-actions">
+        <a href="/municipalities" class="btn btn-primary">Find by Municipality</a>
+        <a href="/voting-process" class="btn btn-secondary">How to Vote (Elections Ontario)</a>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .header-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    color: var(--primary);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    color: var(--text);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  .intro {
+    font-size: 1.15rem;
+    color: var(--text-light);
+    max-width: 850px;
+    line-height: 1.6;
+  }
+
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .stat-card {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 0.625rem;
+    padding: 1.25rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ridings-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    margin-bottom: 4rem;
+  }
+
+  .riding-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-top: 5px solid #334155;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .riding-card:hover {
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  }
+
+  .badge-pc {
+    display: inline-block;
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.75rem;
+  }
+
+  .riding-card-header h2 {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .riding-card-header h2 a {
+    color: var(--text);
+  }
+
+  .riding-card-header h2 a:hover {
+    color: var(--primary);
+  }
+
+  .riding-desc {
+    color: var(--text-light);
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+
+  .mpp-box {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .mpp-avatar {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #334155 0%, #475569 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .meta-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-light);
+    display: block;
+  }
+
+  .mpp-meta h3 {
+    font-size: 1.25rem;
+    margin: 0.15rem 0;
+  }
+
+  .mpp-meta h3 a {
+    color: var(--text);
+  }
+
+  .mpp-role {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin: 0;
+  }
+
+  .recent-results-mini {
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    background: #ffffff;
+  }
+
+  .results-header {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .candidates-mini-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .candidate-row {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .cand-name {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    background: #64748b;
+  }
+
+  .dot-pc, .dot-lib, .dot-ndp, .dot-grn { background: #64748b; }
+
+  .cand-party {
+    color: var(--text-light);
+    font-size: 0.8rem;
+  }
+
+  .elected-pill {
+    background: #dcfce7;
+    color: #15803d;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.1rem 0.4rem;
+    border-radius: 9999px;
+  }
+
+  .cand-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    height: 1.25rem;
+    background: #f1f5f9;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .cand-bar-fill {
+    height: 100%;
+    border-radius: 0.25rem 0 0 0.25rem;
+  }
+
+  .cand-pct {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #334155;
+    padding-right: 0.5rem;
+    margin-left: auto;
+  }
+
+  .municipalities-tags {
+    margin-bottom: 1.5rem;
+  }
+
+  .tags-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+  }
+
+  .tags-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .m-tag {
+    background: #f3f4f6;
+    color: #374151;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 0.25rem;
+    border: 1px solid #e5e7eb;
+  }
+
+  .card-footer {
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .view-details-link {
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .lookup-banner {
+    background: var(--bg-alt);
+    border: 2px dashed var(--border);
+    border-radius: 0.75rem;
+    padding: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .banner-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .banner-content p {
+    color: var(--text-light);
+    margin: 0;
+    max-width: 600px;
+  }
+
+  .banner-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: var(--primary-dark);
+    text-decoration: none;
+  }
+
+  .btn-secondary {
+    background: white;
+    color: var(--primary);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    background: #f8fafc;
+    text-decoration: none;
+  }
+
+  @media (max-width: 768px) {
+    .candidate-row {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+  }
+</style>

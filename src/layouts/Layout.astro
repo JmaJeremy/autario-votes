@@ -10,13 +10,36 @@ const { title, description = "Your trusted source for local election information
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-election-view="municipal">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
+    <script is:inline>
+      // Initialize election view from localStorage or URL query parameter
+      (function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const queryView = urlParams.get('election');
+        const validViews = ['provincial', 'municipal'];
+        let view = 'municipal'; // Default to municipal elections view
+        
+        if (queryView && validViews.includes(queryView)) {
+          view = queryView;
+          try { localStorage.setItem('autario_election_view', view); } catch (e) {}
+        } else {
+          try {
+            const saved = localStorage.getItem('autario_election_view');
+            if (saved && validViews.includes(saved)) {
+              view = saved;
+            }
+          } catch (e) {}
+        }
+        
+        document.documentElement.setAttribute('data-election-view', view);
+      })();
+    </script>
     <style is:global>
       * {
         margin: 0;
@@ -25,13 +48,39 @@ const { title, description = "Your trusted source for local election information
       }
 
       :root {
-        --primary: #1d4ed8;
-        --primary-dark: #1e40af;
+        /* Non-partisan civic palette */
+        --primary: #1e293b;        /* Authoritative Neutral Slate */
+        --primary-dark: #0f172a;   /* Deep Slate */
+        --secondary: #0f766e;      /* Civic Teal */
+        --secondary-dark: #115e59;
+        --accent: #0f766e;         /* Neutral Civic Accent */
         --text: #1f2937;
-        --text-light: #6b7280;
-        --border: #e5e7eb;
+        --text-light: #4b5563;
+        --border: #e2e8f0;
         --bg: #ffffff;
-        --bg-alt: #f9fafb;
+        --bg-alt: #f8fafc;
+        --civic-badge: #334155;    /* Slate badge */
+        --civic-tag-bg: #f1f5f9;
+        --civic-tag-text: #334155;
+        --civic-tag-border: #cbd5e1;
+        /* Neutralized variables to eliminate partisan bias */
+        --pc-blue: #334155;
+        --lib-red: #64748b;
+        --ndp-orange: #94a3b8;
+        --green-party: #475569;
+        --new-blue: #1e293b;
+        --success: #15803d;
+        --success-bg: #dcfce7;
+      }
+
+      /* Dynamic election view switcher visibility - default is municipal */
+      html[data-election-view="provincial"] .municipal-only {
+        display: none !important;
+      }
+
+      html[data-election-view="municipal"] .provincial-only,
+      html:not([data-election-view="provincial"]) .provincial-only {
+        display: none !important;
       }
 
       body {

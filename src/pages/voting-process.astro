@@ -1,99 +1,712 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { MUNICIPAL_ELECTION_DATES_2026 } from '../data/municipal';
 ---
 
 <Layout 
-  title="How to Vote - Autario Votes - Simcoe County"
-  description="Learn about the voting process, registration, and important deadlines"
+  title="How to Vote - Provincial & Municipal Elections - Autario Votes"
+  description="Comprehensive voting guides for both Ontario Provincial Elections (Elections Ontario) and Simcoe County Municipal Elections (Municipal Elections Act)."
 >
   <div class="container page-content">
-    <h1>How to Vote</h1>
-    
-    <section>
-      <h2>1. Register to Vote</h2>
-      <p>
-        To vote in the upcoming election, you must be registered. The registration deadline is 
-        <strong>October 15, 2026</strong>.
-      </p>
-      <ul>
-        <li>You must be 18 years old by Election Day</li>
-        <li>You must be a resident of the municipality where you're registering</li>
-        <li>Register online, by mail, or in person at your local election office</li>
-      </ul>
-      <p><a href="#" class="link-button">Check Your Registration Status →</a></p>
-    </section>
-
-    <section>
-      <h2>2. Know Your Voting Options</h2>
-      
-      <div class="options-grid">
-        <div class="option-card">
-          <h3>Vote Early</h3>
-          <p><strong>TBA</strong></p>
-          <p>Visit any early voting location during the early voting period. No excuse needed.</p>
-        </div>
-
-        <div class="option-card">
-          <h3>Vote by Mail</h3>
-          <p><strong>TBA</strong></p>
-          <p>Request an absentee ballot and mail it back. Must be postmarked by Election Day.</p>
-        </div>
-
-        <div class="option-card">
-          <h3>Vote on Election Day</h3>
-          <p><strong>October 26, 2026</strong></p>
-          <p>Vote at your assigned polling location. Bring a valid photo ID.</p>
-        </div>
+    <!-- ========================================== -->
+    <!-- 1. MUNICIPAL HOW TO VOTE (MUNICIPAL ACT)  -->
+    <!-- ========================================== -->
+    <div class="municipal-only">
+      <div class="header-section">
+        <span class="eyebrow eyebrow-mun">Simcoe County Local Government</span>
+        <h1>How to Vote in Simcoe County Municipal Elections</h1>
+        <p class="intro">
+          Municipal elections in Ontario are administered by each local municipality under the <strong>Municipal Elections Act, 1996</strong>. The next municipal general election is on <strong>Monday, October 26, 2026</strong>.
+        </p>
       </div>
-    </section>
 
-    <section>
-      <h2>3. What to Bring</h2>
-      <p>When you go to vote, bring one of the following forms of ID:</p>
-      <ul>
-        <li>Driver's license</li>
-        <li>Canadian passport</li>
-        <li>Military ID</li>
-        <li>Indian status card</li>
-        <li>Birth certificate</li>
-        <li>Health card</li>
-      </ul>
-    </section>
+      <!-- Municipal Eligibility -->
+      <section class="guide-card card-mun-border">
+        <div class="card-icon">🏡</div>
+        <div class="card-body">
+          <h2>1. Who Can Vote in Municipal Elections?</h2>
+          <p>Under Section 17 of the <em>Municipal Elections Act</em>, a person is entitled to vote in a municipal election if they are:</p>
+          <ul class="checklist check-mun">
+            <li><strong>At least 18 years of age</strong> on Election Day;</li>
+            <li>A <strong>Canadian citizen</strong>; and</li>
+            <li>Either a <strong>resident</strong> of the municipality, or the <strong>owner or tenant of land</strong> in the municipality, or the <strong>spouse of such an owner or tenant</strong>.</li>
+          </ul>
 
-    <section>
-      <h2>4. Find Your Polling Location</h2>
-      <p>
-        Your polling location is assigned based on your address. Enter your address below to 
-        find where you should vote.
-      </p>
-      <p><a href="#" class="link-button">Find My Polling Place →</a></p>
-    </section>
+          <div class="cottager-callout">
+            <h3>🏖️ Cottagers & Seasonal Property Owners Can Vote!</h3>
+            <p>
+              Unlike provincial elections, <strong>non-resident property owners</strong> (such as seasonal cottagers across Georgian Bay, Lake Simcoe, and rural townships) are legally entitled to vote in the municipality where their property is located! 
+            </p>
+            <p>
+              If you live in Toronto or York Region but own a cottage in Wasaga Beach, Collingwood, Oro-Medonte, Severn, Ramara, or Tiny, you can vote in <strong>both</strong> your home city's municipal election AND your cottage municipality's election.
+            </p>
+          </div>
+        </div>
+      </section>
 
-    <section>
-      <h2>Need Help?</h2>
-      <p>
-        If you have questions about voting or need assistance, contact us at <a href="mailto:info@autvotes.ca">info@autvotes.ca</a>.
-      </p>
-    </section>
+      <!-- What is on the Municipal Ballot? -->
+      <section class="guide-card card-mun-border">
+        <div class="card-icon">🗳️</div>
+        <div class="card-body">
+          <h2>2. What Offices Are on the Municipal Ballot?</h2>
+          <p>When you cast your ballot in a Simcoe County municipal election, you vote for 4 key local leadership roles:</p>
+
+          <div class="ballot-roles-grid">
+            <div class="ballot-role-card">
+              <span class="role-badge-chip">Head of Council</span>
+              <h3>1. Mayor</h3>
+              <p>Elected at-large by all voters across the municipality to lead municipal council and set policy.</p>
+            </div>
+
+            <div class="ballot-role-card">
+              <span class="role-badge-chip">County Representative</span>
+              <h3>2. Deputy Mayor</h3>
+              <p>Elected at-large to serve as Deputy Head of Council and represent the town/township at County of Simcoe Council.</p>
+            </div>
+
+            <div class="ballot-role-card">
+              <span class="role-badge-chip">Local Neighbourhood Voice</span>
+              <h3>3. Ward Councillor</h3>
+              <p>Elected by residents of your specific ward (or at-large in smaller townships) to address neighbourhood roads, zoning, and bylaws.</p>
+            </div>
+
+            <div class="ballot-role-card">
+              <span class="role-badge-chip">Education Trustee</span>
+              <h3>4. School Board Trustee</h3>
+              <p>Elected to govern one of the four school boards (English Public, English Catholic, French Public, or French Catholic).</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Municipal Registration & VoterLookup.ca -->
+      <section class="guide-card card-mun-border">
+        <div class="card-icon">📋</div>
+        <div class="card-body">
+          <h2>3. Checking the Municipal Voters' List (VoterLookup.ca)</h2>
+          <p>
+            The Municipal Property Assessment Corporation (MPAC) compiles property assessment and tenant data to generate the preliminary voters' list for each municipality.
+          </p>
+          <div class="action-row">
+            <a href="https://www.voterlookup.ca" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+              Check Your Municipal Registration at VoterLookup.ca ↗
+            </a>
+          </div>
+          <p class="note-text">
+            <strong>School Board Support Declaration:</strong> In Ontario, your voter registration indicates which school board you support (English Public, English Catholic, French Public, or French Catholic). This determines which school board trustee race appears on your municipal ballot.
+          </p>
+        </div>
+      </section>
+
+      <!-- Voting Methods by Municipality -->
+      <section class="guide-card card-mun-border">
+        <div class="card-icon">💻</div>
+        <div class="card-body">
+          <h2>4. Voting Methods Across Simcoe County</h2>
+          <p>
+            Each municipality determines its authorized voting methods by municipal bylaw under the <em>Municipal Elections Act</em>:
+          </p>
+
+          <div class="methods-summary-grid">
+            <div class="method-card">
+              <h3>🌐 Internet & Telephone Voting</h3>
+              <p>
+                Used exclusively by the <strong>City of Barrie</strong>, <strong>Innisfil</strong>, <strong>Bradford West Gwillimbury</strong>, <strong>Midland</strong>, <strong>Tiny</strong>, <strong>Tay</strong>, <strong>Clearview</strong>, <strong>Oro-Medonte</strong>, <strong>Springwater</strong>, and <strong>Adjala-Tosorontio</strong>. Voters receive a secure PIN by mail and can cast their ballot online or via telephone 24/7 without paper ballots.
+              </p>
+            </div>
+
+            <div class="method-card">
+              <h3>🗳️ In-Person Paper Ballots</h3>
+              <p>
+                The <strong>City of Orillia</strong> conducts its municipal election exclusively via in-person paper ballots counted by ImageCast Precinct optical tabulators (Orillia City Council voted against internet voting due to cybersecurity concerns). The <strong>Township of Essa</strong> also uses traditional in-person paper ballots.
+              </p>
+            </div>
+
+            <div class="method-card">
+              <h3>🔄 Hybrid Voting (Internet + Paper)</h3>
+              <p>
+                Municipalities including <strong>Collingwood</strong>, <strong>Wasaga Beach</strong>, <strong>New Tecumseth</strong>, <strong>Penetanguishene</strong>, <strong>Severn</strong>, and <strong>Ramara</strong> offer hybrid models, combining multi-week 24/7 internet voting with in-person paper ballot polling locations and optical tabulators.
+              </p>
+            </div>
+
+            <div class="method-card">
+              <h3>🏢 Voter Assistance Centres & Kiosks</h3>
+              <p>
+                Every municipality—including 100% digital jurisdictions like Barrie—sets up physical Voter Assistance Centres at Town Halls, libraries, and community facilities equipped with touchscreens, tablets, accessible peripherals, and staff assistance.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Key Dates Section -->
+      <section class="guide-card card-mun-border">
+        <div class="card-icon">📅</div>
+        <div class="card-body">
+          <h2>5. 2026 Municipal Election Dates</h2>
+          <div class="dates-mini-grid">
+            {MUNICIPAL_ELECTION_DATES_2026.map((d) => (
+              <div class="date-chip">
+                <strong>{d.title}</strong>
+                <span class="d-val">{d.date}</span>
+                <span class="d-sub">{d.desc}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. PROVINCIAL HOW TO VOTE (ELECTIONS ON)  -->
+    <!-- ========================================== -->
+    <div class="provincial-only">
+      <div class="header-section">
+        <span class="eyebrow">Elections Ontario Guide</span>
+        <h1>How to Vote in Ontario Provincial Elections</h1>
+        <p class="intro">
+          Provincial elections in Ontario are administered by <strong>Elections Ontario</strong>, an independent agency of the Legislative Assembly. Learn about eligibility rules, voter registration, approved identification, and your options for casting a ballot.
+        </p>
+      </div>
+
+      <!-- Eligibility Section -->
+      <section class="guide-card">
+        <div class="card-icon">👤</div>
+        <div class="card-body">
+          <h2>1. Who Can Vote in Ontario?</h2>
+          <p>To be eligible to vote in an Ontario provincial general election or by-election, you must be:</p>
+          <ul class="checklist">
+            <li><strong>At least 18 years of age</strong> on Election Day;</li>
+            <li>A <strong>Canadian citizen</strong>; and</li>
+            <li>A <strong>resident of Ontario</strong>.</li>
+          </ul>
+          <div class="callout-box">
+            <p>
+              Students attending university or college in Ontario can choose to vote either at their home address or at their student residence address, but not both.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Registration Section -->
+      <section class="guide-card">
+        <div class="card-icon">📝</div>
+        <div class="card-body">
+          <h2>2. Register to Vote (RegisterToVoteON.ca)</h2>
+          <p>
+            Elections Ontario maintains the permanent Register of Electors for the province. 
+            When you are registered, you will automatically receive a <strong>Voter Information Card (VIC)</strong> in the mail before Election Day detailing your assigned voting location.
+          </p>
+          <div class="action-row">
+            <a href="https://registertovoteon.ca" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+              Check or Update Registration at RegisterToVoteON.ca ↗
+            </a>
+          </div>
+          <p class="note-text">
+            <em>Didn't register ahead of time?</em> In Ontario, you can always register in person at your polling station when you go to vote. Just bring acceptable ID proving your name and residential address.
+          </p>
+        </div>
+      </section>
+
+      <!-- 4 Ways to Vote -->
+      <section class="guide-card">
+        <div class="card-icon">🗳️</div>
+        <div class="card-body">
+          <h2>3. Four Ways to Cast Your Ballot</h2>
+          <p>Ontario provides multiple flexible, accessible ways to vote:</p>
+
+          <div class="options-grid">
+            <div class="option-box">
+              <span class="opt-badge">Option A</span>
+              <h3>Vote on Election Day</h3>
+              <p>
+                Polls are open from <strong>9:00 AM to 9:00 PM Eastern Time</strong>. 
+                Cast your ballot in person at your designated neighbourhood polling station as listed on your Voter Information Card.
+              </p>
+            </div>
+
+            <div class="option-box">
+              <span class="opt-badge">Option B</span>
+              <h3>Advance Voting</h3>
+              <p>
+                Advance voting locations operate across each riding for several consecutive days before Election Day. Any registered voter in the riding may vote at any designated advance voting location.
+              </p>
+            </div>
+
+            <div class="option-box">
+              <span class="opt-badge">Option C</span>
+              <h3>Vote by Mail</h3>
+              <p>
+                Electors can request a mail-in voting kit online through the Elections Ontario portal once the election writ is issued. Ballots must be received by 8:00 PM on Election Day.
+              </p>
+            </div>
+
+            <div class="option-box">
+              <span class="opt-badge">Option D</span>
+              <h3>Vote at the Returning Office</h3>
+              <p>
+                Each riding has an official Returning Office open six days a week during an election campaign. You can vote by special ballot in person from the day after the writ is issued until 6:00 PM the evening before Election Day.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Required Identification Section -->
+      <section class="guide-card">
+        <div class="card-icon">🪪</div>
+        <div class="card-body">
+          <h2>4. Required Identification (ID)</h2>
+          <p>
+            Under the Ontario <em>Election Act</em>, you must show <strong>one piece of identification that shows both your NAME and current RESIDENTIAL ADDRESS</strong>.
+          </p>
+
+          <div class="id-grid">
+            <div class="id-group">
+              <h3>Accepted Government IDs (One piece required):</h3>
+              <ul>
+                <li><strong>Ontario Driver's Licence</strong> (shows name & residential address)</li>
+                <li><strong>Ontario Photo Card</strong> (shows name & residential address)</li>
+                <li>Ontario Motor Vehicle Permit (vehicle registration)</li>
+                <li>Income Tax Assessment Notice or Canadian Notice of Assessment</li>
+                <li>Government of Ontario or Government of Canada benefit statement</li>
+              </ul>
+            </div>
+
+            <div class="id-group">
+              <h3>Other Accepted Proof of Residence Documents:</h3>
+              <ul>
+                <li>Residential lease, sub-lease, or mortgage agreement</li>
+                <li>Utility bill (hydro, gas, water, internet, or cable)</li>
+                <li>Bank statement, credit card statement, or credit union document</li>
+                <li>Pay stub or employment letter with residential address</li>
+                <li>Property tax assessment or bill</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="warning-callout">
+            <strong>⚠️ Important Note on Ontario Health Cards:</strong>
+            <p>
+              An Ontario Health Card does <strong>not</strong> display your residential address. While it proves your identity and photo, you must pair it with a document proving your residential address (such as a utility bill, bank statement, or lease) to cast your ballot.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Official Contacts -->
+      <section class="guide-card contact-card">
+        <div class="card-icon">📞</div>
+        <div class="card-body">
+          <h2>Official Elections Ontario Inquiries</h2>
+          <p>For questions regarding provincial polling locations, returning offices, or special ballots:</p>
+          <div class="contacts-list">
+            <div class="contact-item">
+              <strong>Website:</strong> <a href="https://www.elections.on.ca" target="_blank" rel="noopener noreferrer">elections.on.ca ↗</a>
+            </div>
+            <div class="contact-item">
+              <strong>Toll-Free Phone:</strong> 1-888-668-8683 (1-888-ONT-VOTE)
+            </div>
+            <div class="contact-item">
+              <strong>Voter Registry Portal:</strong> <a href="https://registertovoteon.ca" target="_blank" rel="noopener noreferrer">RegisterToVoteON.ca ↗</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   </div>
-
-  <style>
-    .options-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      margin: 2rem 0;
-    }
-
-    .option-card {
-      background: var(--bg-alt);
-      padding: 1.5rem;
-      border-radius: 0.5rem;
-      border: 1px solid var(--border);
-    }
-
-    .option-card p {
-      margin-bottom: 0.5rem;
-    }
-  </style>
 </Layout>
+
+<style>
+  .header-section {
+    margin-bottom: 3rem;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    color: var(--primary);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+  }
+
+  .eyebrow-mun {
+    color: var(--secondary);
+  }
+
+  h1 {
+    font-size: 2.75rem;
+    margin-bottom: 1rem;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .intro {
+    font-size: 1.15rem;
+    color: var(--text-light);
+    max-width: 850px;
+    line-height: 1.6;
+  }
+
+  .guide-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 2.25rem;
+    margin-bottom: 2.5rem;
+    display: flex;
+    gap: 1.75rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  }
+
+  .card-mun-border {
+    border-left: 5px solid var(--secondary);
+  }
+
+  .card-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .card-body {
+    flex-grow: 1;
+  }
+
+  .card-body h2 {
+    font-size: 1.6rem;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  .card-body p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  .checklist {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+  }
+
+  .checklist li {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+    padding-left: 1.75rem;
+    position: relative;
+  }
+
+  .checklist li::before {
+    content: "✓";
+    color: #10b981;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+  }
+
+  .check-mun li::before {
+    color: var(--secondary);
+  }
+
+  .callout-box {
+    background: #f0fdf4;
+    border-left: 4px solid #10b981;
+    padding: 1rem 1.25rem;
+    border-radius: 0 0.375rem 0.375rem 0;
+    margin-top: 1rem;
+  }
+
+  .callout-box p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #166534;
+  }
+
+  .cottager-callout {
+    background: #f0fdfa;
+    border: 1px solid #99f6e4;
+    border-left: 4px solid var(--secondary);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .cottager-callout h3 {
+    font-size: 1.2rem;
+    color: var(--secondary-dark);
+    margin-bottom: 0.5rem;
+  }
+
+  .cottager-callout p {
+    font-size: 0.95rem;
+    color: #134e4a;
+    margin-bottom: 0.5rem;
+  }
+
+  .cottager-callout p:last-child {
+    margin-bottom: 0;
+  }
+
+  .ballot-roles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  .ballot-role-card {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+  }
+
+  .role-badge-chip {
+    display: inline-block;
+    background: #ccfbf1;
+    color: #0f766e;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.25rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .ballot-role-card h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .ballot-role-card p {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .methods-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .method-card {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+  }
+
+  .method-card h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .method-card p {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .dates-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .date-chip {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .date-chip strong {
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .date-chip .d-val {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--secondary-dark);
+    margin: 0.25rem 0;
+  }
+
+  .date-chip .d-sub {
+    font-size: 0.8rem;
+    color: var(--text-light);
+  }
+
+  .action-row {
+    margin: 1.25rem 0;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    border-radius: 0.375rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: var(--primary-dark);
+    text-decoration: none;
+  }
+
+  .btn-secondary {
+    background: var(--secondary);
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background: var(--secondary-dark);
+    text-decoration: none;
+  }
+
+  .note-text {
+    font-size: 0.95rem;
+    color: var(--text-light);
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .option-box {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    position: relative;
+  }
+
+  .opt-badge {
+    display: inline-block;
+    background: #e2e8f0;
+    color: #334155;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.25rem;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .option-box h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .option-box p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--text-light);
+    margin: 0;
+  }
+
+  .id-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin: 1.5rem 0;
+  }
+
+  .id-group {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+  }
+
+  .id-group h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+
+  .id-group ul {
+    padding-left: 1.25rem;
+    margin: 0;
+  }
+
+  .id-group li {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .warning-callout {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-left: 4px solid #f59e0b;
+    border-radius: 0.375rem;
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  .warning-callout strong {
+    color: #92400e;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .warning-callout p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #78350f;
+  }
+
+  .contact-card {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+  }
+
+  .contacts-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
+
+  .contact-item {
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 768px) {
+    .guide-card {
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1.5rem;
+    }
+
+    .card-icon {
+      font-size: 2rem;
+    }
+  }
+</style>

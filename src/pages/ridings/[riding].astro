@@ -1,0 +1,578 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CandidateCard from '../../components/CandidateCard.astro';
+import { RIDINGS, type Riding } from '../../data/ridings';
+import { getCollection } from 'astro:content';
+import { sortByLastName } from '../../utils/sorting';
+
+export async function getStaticPaths() {
+  return RIDINGS.map((riding) => ({
+    params: { riding: riding.slug },
+    props: { riding }
+  }));
+}
+
+interface Props {
+  riding: Riding;
+}
+
+const { riding } = Astro.props;
+
+// Fetch candidates matching this riding
+const allCandidates = await getCollection('candidates');
+const ridingCandidates = allCandidates.filter(c => {
+  if (!c.data.riding) return false;
+  return c.data.riding.toLowerCase().includes(riding.slug.replace('-', ' ').toLowerCase()) ||
+         c.data.riding.toLowerCase().includes(riding.name.toLowerCase());
+});
+
+const sortedCandidates = sortByLastName(
+  ridingCandidates.map(c => ({
+    name: c.data.name,
+    position: c.data.position,
+    party: c.data.party,
+    riding: c.data.riding,
+    municipality: c.data.municipality,
+    image: c.data.image,
+    slug: c.slug,
+    incumbent: c.data.incumbent || c.data.elected,
+    role: c.data.role
+  }))
+);
+---
+
+<Layout 
+  title={`${riding.name} - Provincial Riding Race & Candidates - Autario Votes`}
+  description={`Provincial race profile for ${riding.name}: candidate pool in alphabetical order by last name, riding communities, and election info.`}
+>
+  <div class="container page-content">
+    <nav class="breadcrumbs">
+      <a href="/">Home</a> &gt; <a href="/ridings">Ridings</a> &gt; <span>{riding.name}</span>
+    </nav>
+
+    <header class="riding-header">
+      <span class="badge-tag">Provincial Electoral District</span>
+      <h1>{riding.name}</h1>
+      <p class="riding-desc">{riding.description}</p>
+    </header>
+
+    <!-- 1. Candidates Pool Section: Leads directly on the page! -->
+    <section class="riding-candidates-section">
+      <div class="section-title-wrap">
+        <h2>Candidates Pool for Member of Provincial Parliament (MPP)</h2>
+        <span class="count-pill">{sortedCandidates.length} Candidates</span>
+      </div>
+      <p class="section-sub">
+        Candidates contesting {riding.name}, listed in alphabetical order by last name with subtle flags for incumbents:
+      </p>
+
+      <div class="candidates-grid">
+        {sortedCandidates.map((c) => (
+          <CandidateCard
+            name={c.name}
+            position={c.position}
+            party={c.party}
+            riding={c.riding}
+            municipality={c.municipality}
+            image={c.image}
+            slug={c.slug}
+            incumbent={c.incumbent}
+            role={c.role}
+          />
+        ))}
+      </div>
+    </section>
+
+    <!-- 2. Geographic Coverage -->
+    <section class="geo-section">
+      <h2>Municipalities & Communities Included</h2>
+      <p>
+        The riding of {riding.name} includes the following municipal areas in Simcoe County:
+      </p>
+      <div class="mun-grid">
+        {riding.municipalities.map((m) => (
+          <div class="mun-card">
+            <h3>{m}</h3>
+            <p>Electoral area in {riding.name}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- 3. Sitting MPP Reference Banner -->
+    <section class="mpp-feature-card">
+      <div class="mpp-feature-left">
+        <div class="mpp-feature-avatar">
+          <span>{riding.mpp.charAt(0)}</span>
+        </div>
+        <div class="mpp-feature-info">
+          <span class="eyebrow-mpp">Current Legislative Representation (Expiring Term)</span>
+          <h2><a href={`/candidate/${riding.mppSlug}`}>{riding.mpp}</a></h2>
+          <span class="badge-party">{riding.party}</span>
+          <p class="role-text">{riding.role}</p>
+        </div>
+      </div>
+      <div class="mpp-feature-contact">
+        <h3>Constituency Office</h3>
+        <p class="contact-line">📍 {riding.officeAddress}</p>
+        <p class="contact-line">📞 {riding.officePhone}</p>
+        <a href={`/candidate/${riding.mppSlug}`} class="btn-profile">View Full MPP Biography →</a>
+      </div>
+    </section>
+
+    <!-- 4. Previous Election Results Section -->
+    <section class="results-section">
+      <div class="results-header-block">
+        <div>
+          <h2>Previous Election Results (Historical Reference)</h2>
+          <p class="results-sub">{riding.recentElection.title} — {riding.recentElection.date}</p>
+        </div>
+        <div class="turnout-pill">
+          <span>Voter Turnout:</span>
+          <strong>{riding.recentElection.turnout}</strong>
+          <span class="sub-turnout">({riding.recentElection.totalVotes.toLocaleString()} votes cast)</span>
+        </div>
+      </div>
+
+      <div class="results-table-wrap">
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Candidate</th>
+              <th>Party</th>
+              <th>Votes</th>
+              <th>Share</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {riding.recentElection.results.map((res) => (
+              <tr>
+                <td class="cell-candidate">
+                  <strong>{res.candidate}</strong>
+                </td>
+                <td>
+                  <span class={`party-badge party-${res.partyCode.toLowerCase()}`}>
+                    {res.party}
+                  </span>
+                </td>
+                <td class="cell-votes">{res.votes.toLocaleString()}</td>
+                <td class="cell-bar-pct">
+                  <div class="table-bar-wrap">
+                    <div class="table-bar-fill" style={`width: ${res.percent}; background-color: #475569;`}></div>
+                    <span class="table-bar-text">{res.percent}</span>
+                  </div>
+                </td>
+                <td>
+                  {res.elected ? (
+                    <span class="pill-won">Elected (2025)</span>
+                  ) : (
+                    <span class="pill-runner">Candidate</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="back-nav">
+      <a href="/ridings">← Back to All Provincial Ridings</a>
+      <a href="/municipalities">Find Your Riding by Municipality →</a>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .breadcrumbs {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+  }
+
+  .breadcrumbs a {
+    color: var(--primary);
+  }
+
+  .riding-header {
+    margin-bottom: 3rem;
+  }
+
+  .badge-tag {
+    display: inline-block;
+    background: #e2e8f0;
+    color: #475569;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-size: 2.75rem;
+    color: var(--text);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  .riding-desc {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    max-width: 850px;
+    line-height: 1.6;
+  }
+
+  .mpp-feature-card {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-left: 6px solid #334155;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 2rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .mpp-feature-left {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+
+  .mpp-feature-avatar {
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #334155 0%, #475569 100%);
+    color: white;
+    font-size: 2rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .eyebrow-mpp {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-light);
+    display: block;
+  }
+
+  .mpp-feature-info h2 {
+    font-size: 1.75rem;
+    margin: 0.25rem 0 0.5rem 0;
+  }
+
+  .mpp-feature-info h2 a {
+    color: var(--text);
+  }
+
+  .badge-party {
+    display: inline-block;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .role-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin: 0;
+  }
+
+  .mpp-feature-contact {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+  }
+
+  .mpp-feature-contact h3 {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+
+  .contact-line {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+  }
+
+  .btn-profile {
+    display: inline-block;
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .results-section {
+    margin-bottom: 3.5rem;
+  }
+
+  .results-header-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .results-header-block h2 {
+    font-size: 1.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .results-sub {
+    color: var(--text-light);
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .turnout-pill {
+    background: #f1f5f9;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .sub-turnout {
+    color: var(--text-light);
+    font-size: 0.8rem;
+  }
+
+  .results-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+  }
+
+  .results-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.95rem;
+  }
+
+  .results-table th {
+    background: var(--bg-alt);
+    padding: 0.875rem 1rem;
+    font-weight: 700;
+    color: var(--text-light);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .results-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .row-winner {
+    background: #f8fafc;
+  }
+
+  .cell-candidate strong {
+    color: var(--text);
+  }
+
+  .party-badge {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+  }
+
+  .party-pc, .party-lib, .party-ndp, .party-grn, .party-nb, .party-oth {
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+  }
+
+  .cell-votes {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+
+  .table-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #f1f5f9;
+    border-radius: 0.25rem;
+    height: 1.5rem;
+    min-width: 140px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .table-bar-fill {
+    height: 100%;
+    border-radius: 0.25rem 0 0 0.25rem;
+  }
+
+  .table-bar-text {
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-left: auto;
+    padding-right: 0.5rem;
+  }
+
+  .pill-won {
+    background: #dcfce7;
+    color: #15803d;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+  }
+
+  .pill-runner {
+    color: var(--text-light);
+    font-size: 0.85rem;
+  }
+
+  .geo-section {
+    margin-bottom: 3.5rem;
+  }
+
+  .geo-section h2 {
+    font-size: 1.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .geo-section p {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+  }
+
+  .mun-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .mun-card {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+  }
+
+  .mun-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+    color: var(--text);
+  }
+
+  .mun-card p {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin: 0;
+  }
+
+  .riding-candidates-section {
+    margin-bottom: 3.5rem;
+  }
+
+  .section-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .section-title-wrap h2 {
+    font-size: 1.75rem;
+    margin: 0;
+    color: var(--text);
+  }
+
+  .count-pill {
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+  }
+
+  .candidates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .cand-link-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    text-decoration: none;
+  }
+
+  .cand-link-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .cand-link-party {
+    font-size: 0.85rem;
+    color: var(--primary);
+    margin-top: 0.25rem;
+  }
+
+  .cand-link-arrow {
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .back-nav {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .back-nav a {
+    font-weight: 600;
+  }
+
+  @media (max-width: 840px) {
+    .mpp-feature-card {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
