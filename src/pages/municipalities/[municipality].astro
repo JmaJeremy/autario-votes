@@ -141,6 +141,46 @@ const { munDetail, mapData, riding, candidates } = Astro.props;
         )}
       </div>
 
+      <!-- Mayoral Election Candidates & Results -->
+      {munDetail.candidates && munDetail.candidates.length > 0 && (
+        <div class="election-race-block">
+          <div class="race-header">
+            <div>
+              <h3>Head of Council (Mayor) Election Candidates & Results</h3>
+              <p class="sub-text">Certified votes and candidate roster under the <em>Municipal Elections Act</em>:</p>
+            </div>
+            <span class="race-badge">Certified Municipal Race</span>
+          </div>
+
+          <div class="race-candidates-grid">
+            {munDetail.candidates.map(cand => (
+              <div class={`cand-race-card ${cand.elected ? 'card-winner' : ''}`}>
+                <div class="cand-race-top">
+                  <span class={`status-pill ${cand.elected ? 'pill-elected' : 'pill-candidate'}`}>
+                    {cand.elected ? '✓ Elected (In Office)' : 'Candidate / Challenger'}
+                  </span>
+                  <span class="vote-share-badge">{cand.votePercent}</span>
+                </div>
+                <h4>
+                  {cand.slug ? (
+                    <a href={`/candidate/${cand.slug}`}>{cand.name}</a>
+                  ) : (
+                    cand.name
+                  )}
+                </h4>
+                {cand.note && <p class="cand-sub-note">{cand.note}</p>}
+                {cand.votes && (
+                  <p class="cand-votes-count"><strong>{cand.votes.toLocaleString()}</strong> certified votes cast</p>
+                )}
+                {cand.slug && (
+                  <a href={`/candidate/${cand.slug}`} class="cand-profile-link">View Candidate Profile →</a>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <!-- Ward Councillors Grid -->
       <div class="councillors-block">
         <h3>Municipal Councillors</h3>
@@ -492,6 +532,126 @@ const { munDetail, mapData, riding, candidates } = Astro.props;
     font-size: 0.85rem;
     color: var(--text-light);
     margin: 0;
+  }
+
+  .election-race-block {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.625rem;
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .race-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 0.75rem;
+  }
+
+  .race-header h3 {
+    font-size: 1.3rem;
+    color: var(--primary);
+    margin: 0 0 0.25rem 0;
+  }
+
+  .race-badge {
+    background: #0f766e;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .race-candidates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+
+  .cand-race-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  .cand-race-card.card-winner {
+    border-top: 4px solid var(--secondary);
+    background: #fdfefe;
+  }
+
+  .cand-race-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .status-pill {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.25rem;
+    text-transform: uppercase;
+  }
+
+  .pill-elected {
+    background: #ccfbf1;
+    color: #0f766e;
+  }
+
+  .pill-candidate {
+    background: #f1f5f9;
+    color: #475569;
+  }
+
+  .vote-share-badge {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--primary);
+  }
+
+  .cand-race-card h4 {
+    font-size: 1.1rem;
+    margin: 0;
+    color: var(--text);
+  }
+
+  .cand-sub-note {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .cand-votes-count {
+    font-size: 0.85rem;
+    color: #334155;
+    margin: 0;
+  }
+
+  .cand-profile-link {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--secondary);
+    text-decoration: none;
+    margin-top: auto;
+  }
+
+  .cand-profile-link:hover {
+    text-decoration: underline;
   }
 
   .councillors-block {

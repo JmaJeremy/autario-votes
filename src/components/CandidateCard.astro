@@ -39,9 +39,13 @@ const partyClass = getPartyClass(party);
           <span>{name.charAt(0)}</span>
         </div>
       )}
-      {elected && (
+      {elected ? (
         <span class="badge-elected">
           {level === 'municipal' || position.toLowerCase().includes('mayor') || position.toLowerCase().includes('warden') ? 'In Office' : 'Elected MPP'}
+        </span>
+      ) : (
+        <span class="badge-candidate">
+          {level === 'municipal' || position.toLowerCase().includes('mayor') ? 'Mayoral Candidate' : 'Candidate'}
         </span>
       )}
     </div>
@@ -134,6 +138,21 @@ const partyClass = getPartyClass(party);
     top: 0.75rem;
     right: 0.75rem;
     background: #1e293b;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .badge-candidate {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: #475569;
     color: white;
     font-size: 0.75rem;
     font-weight: 700;

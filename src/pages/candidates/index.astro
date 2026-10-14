@@ -11,17 +11,27 @@ const allContentCandidates = await getCollection('candidates');
 const provincialCandidates = allContentCandidates.filter(c => c.data.level !== 'municipal');
 const provincialMPPs = provincialCandidates.filter(c => c.data.elected);
 
-// Municipal Leaders (Mayors, Deputy Mayors, Councillors, Trustees)
-const municipalMayors = MUNICIPALITIES_DATA.map(m => ({
-  name: m.mayor.name,
-  title: m.mayor.title,
-  municipality: m.name,
-  slug: m.mayor.slug || m.slug,
-  email: m.mayor.email,
-  phone: m.mayor.phone,
-  type: 'Mayor',
-  sub: m.type
-}));
+// Municipal Leaders & Candidates (Mayors, Challengers, Councillors, Trustees)
+const allMayoralCandidates = MUNICIPALITIES_DATA.flatMap(m =>
+  (m.candidates || []).map(c => ({
+    name: c.name,
+    office: c.office,
+    municipality: m.name,
+    munSlug: m.slug,
+    votes: c.votes,
+    votePercent: c.votePercent,
+    elected: c.elected,
+    incumbent: c.incumbent,
+    slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+    note: c.note,
+    email: c.elected ? m.mayor.email : undefined,
+    phone: c.elected ? m.mayor.phone : undefined
+  }))
+);
+
+const municipalMayors = allMayoralCandidates.filter(c => c.elected);
+const municipalChallengers = allMayoralCandidates.filter(c => !c.elected);
+const provincialChallengers = provincialCandidates.filter(c => !c.data.elected);
 
 // Build list of all councillors
 const municipalCouncillors = MUNICIPALITIES_DATA.flatMap(m => 
@@ -110,32 +120,64 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
         </div>
 
         <div class="role-tabs" id="mun-role-tabs">
-          <button class="tab-btn active" data-tab="mayors">👑 Mayors ({municipalMayors.length})</button>
+          <button class="tab-btn active" data-tab="mayors">👑 Mayors & Candidates ({allMayoralCandidates.length})</button>
           <button class="tab-btn" data-tab="councillors">👥 Municipal Councillors ({municipalCouncillors.length})</button>
           <button class="tab-btn" data-tab="trustees">🎒 School Board Trustees ({allTrustees.length})</button>
         </div>
 
-        <!-- 1. MAYORS TAB CONTENT -->
+        <!-- 1. MAYORS & CANDIDATES TAB CONTENT -->
         <div class="tab-content active" id="tab-mayors">
-          <div class="officials-grid">
-            {municipalMayors.map(m => {
-              const matchedCandidate = allContentCandidates.find(c => c.slug === m.slug);
+          <div class="status-filters-wrap" id="mun-status-filters">
+            <span class="filter-label">Filter:</span>
+            <div class="filter-buttons">
+              <button class="filter-btn active" data-status="all">All Candidates ({allMayoralCandidates.length})</button>
+              <button class="filter-btn" data-status="elected">In Office / Mayors ({municipalMayors.length})</button>
+              <button class="filter-btn" data-status="challenger">Challengers & Contenders ({municipalChallengers.length})</button>
+            </div>
+          </div>
+
+          <div class="officials-grid" id="mun-candidates-grid">
+            {allMayoralCandidates.map(c => {
+              const matchedCandidate = allContentCandidates.find(cand => cand.slug === c.slug);
               const imgUrl = matchedCandidate?.data?.image;
+              const hasProfile = !!matchedCandidate;
               return (
-                <div class="official-card">
+                <div class="official-card mun-candidate-card" data-status={c.elected ? 'elected' : 'challenger'}>
                   {imgUrl ? (
-                    <img src={imgUrl} alt={m.name} class="card-avatar-img" />
+                    <img src={imgUrl} alt={c.name} class="card-avatar-img" />
                   ) : (
-                    <div class="card-avatar avatar-mayor">{m.name.charAt(0)}</div>
+                    <div class={`card-avatar ${c.elected ? 'avatar-mayor' : 'avatar-challenger'}`}>
+                      {c.name.charAt(0)}
+                    </div>
                   )}
                   <div class="card-meta">
-                    <span class="badge-role">Head of Council</span>
-                    <h3><a href={`/candidate/${m.slug}`}>{m.name}</a></h3>
-                    <p class="title-text">{m.title}</p>
-                    <p class="sub-text">📍 {m.municipality}</p>
-                    {m.phone && <p class="contact-text">📞 {m.phone}</p>}
-                    {m.email && <p class="contact-text">✉️ {m.email}</p>}
-                    <a href={`/candidate/${m.slug}`} class="link-profile">View Profile & Council →</a>
+                    <div class="status-row">
+                      <span class={c.elected ? 'badge-role role-elected' : 'badge-role role-challenger'}>
+                        {c.elected ? 'In Office (Mayor)' : 'Mayoral Candidate'}
+                      </span>
+                      {c.votePercent && (
+                        <span class="vote-tag">{typeof c.votePercent === 'number' ? `${c.votePercent}%` : c.votePercent}</span>
+                      )}
+                    </div>
+                    <h3>
+                      {hasProfile ? (
+                        <a href={`/candidate/${c.slug}`}>{c.name}</a>
+                      ) : (
+                        c.name
+                      )}
+                    </h3>
+                    <p class="title-text">{c.office}</p>
+                    <p class="sub-text">📍 <a href={`/municipalities/${c.munSlug}`}>{c.municipality}</a></p>
+                    {c.votes && c.votes > 0 ? (
+                      <p class="votes-text">🗳️ {c.votes.toLocaleString()} votes</p>
+                    ) : null}
+                    {c.phone && <p class="contact-text">📞 {c.phone}</p>}
+                    {c.email && <p class="contact-text">✉️ {c.email}</p>}
+                    {hasProfile ? (
+                      <a href={`/candidate/${c.slug}`} class="link-profile">View Profile →</a>
+                    ) : (
+                      <a href={`/municipalities/${c.munSlug}`} class="link-profile">View Municipality →</a>
+                    )}
                   </div>
                 </div>
               );
@@ -238,10 +280,19 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
         </div>
       </section>
 
-      <!-- All Provincial Candidates by Riding Filter -->
+      <!-- All Provincial Candidates by Riding & Status Filter -->
       <section class="section-block">
         <div class="section-title-wrap">
-          <h2>All Provincial Candidates by Riding</h2>
+          <h2>All Provincial Candidates ({provincialCandidates.length})</h2>
+        </div>
+
+        <div class="filters-container">
+          <span class="filter-label">Filter by Status:</span>
+          <div class="filter-buttons" id="prov-status-filters">
+            <button class="filter-btn active" data-status="all">All Candidates ({provincialCandidates.length})</button>
+            <button class="filter-btn" data-status="elected">Sitting MPPs ({provincialMPPs.length})</button>
+            <button class="filter-btn" data-status="challenger">Challengers ({provincialChallengers.length})</button>
+          </div>
         </div>
 
         <div class="filters-container">
@@ -262,9 +313,10 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
               .toLowerCase()
               .replace(/[—–]/g, '-')
               .replace(/\s+/g, '-');
+            const statusAttr = candidate.data.elected ? 'elected' : 'challenger';
 
             return (
-              <div class="prov-candidate-item" data-riding={ridingAttr}>
+              <div class="prov-candidate-item" data-riding={ridingAttr} data-status={statusAttr}>
                 <CandidateCard
                   name={candidate.data.name}
                   position={candidate.data.position}
@@ -299,25 +351,66 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
 </Layout>
 
 <script is:inline>
-  // Provincial Riding filtering
-  const provFilterButtons = document.querySelectorAll('#prov-riding-filters .filter-btn');
-  const provCandidateItems = document.querySelectorAll('#prov-candidates-roster .prov-candidate-item');
+  // Municipal Candidate Status filtering
+  const munStatusBtns = document.querySelectorAll('#mun-status-filters .filter-btn');
+  const munCandidateCards = document.querySelectorAll('#mun-candidates-grid .mun-candidate-card');
 
-  provFilterButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      provFilterButtons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
+  munStatusBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      munStatusBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
 
-      const filterValue = button.getAttribute('data-filter');
-
-      provCandidateItems.forEach(item => {
-        const itemRiding = item.getAttribute('data-riding') || '';
-        if (filterValue === 'all' || itemRiding.includes(filterValue)) {
-          item.style.display = 'block';
+      const status = btn.getAttribute('data-status');
+      munCandidateCards.forEach(card => {
+        const cardStatus = card.getAttribute('data-status');
+        if (status === 'all' || cardStatus === status) {
+          card.style.display = 'flex';
         } else {
-          item.style.display = 'none';
+          card.style.display = 'none';
         }
       });
+    });
+  });
+
+  // Provincial Candidates filtering (Riding + Status)
+  const provRidingBtns = document.querySelectorAll('#prov-riding-filters .filter-btn');
+  const provStatusBtns = document.querySelectorAll('#prov-status-filters .filter-btn');
+  const provCandidateItems = document.querySelectorAll('#prov-candidates-roster .prov-candidate-item');
+
+  let activeProvRiding = 'all';
+  let activeProvStatus = 'all';
+
+  function applyProvFilters() {
+    provCandidateItems.forEach(item => {
+      const itemRiding = item.getAttribute('data-riding') || '';
+      const itemStatus = item.getAttribute('data-status') || '';
+
+      const matchRiding = activeProvRiding === 'all' || itemRiding.includes(activeProvRiding);
+      const matchStatus = activeProvStatus === 'all' || itemStatus === activeProvStatus;
+
+      if (matchRiding && matchStatus) {
+        item.style.display = 'block';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+
+  provRidingBtns.forEach(button => {
+    button.addEventListener('click', () => {
+      provRidingBtns.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+      activeProvRiding = button.getAttribute('data-filter') || 'all';
+      applyProvFilters();
+    });
+  });
+
+  provStatusBtns.forEach(button => {
+    button.addEventListener('click', () => {
+      provStatusBtns.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+      activeProvStatus = button.getAttribute('data-status') || 'all';
+      applyProvFilters();
     });
   });
 
@@ -586,6 +679,10 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
     background: linear-gradient(135deg, var(--secondary) 0%, #14b8a6 100%);
   }
 
+  .avatar-challenger {
+    background: linear-gradient(135deg, #64748b 0%, #94a3b8 100%);
+  }
+
   .avatar-councillor {
     background: linear-gradient(135deg, #475569 0%, #64748b 100%);
   }
@@ -600,6 +697,49 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
     flex-direction: column;
     gap: 0.2rem;
     flex-grow: 1;
+  }
+
+  .status-filters-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .status-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.25rem;
+  }
+
+  .role-elected {
+    background: #ccfbf1;
+    color: #0f766e;
+  }
+
+  .role-challenger {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+  }
+
+  .vote-tag {
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: #e2e8f0;
+    color: #334155;
+    padding: 0.15rem 0.45rem;
+    border-radius: 0.25rem;
+  }
+
+  .votes-text {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    font-weight: 600;
+    margin: 0;
   }
 
   .badge-role {

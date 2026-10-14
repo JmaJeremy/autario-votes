@@ -7,6 +7,17 @@ export interface MunicipalOfficial {
   slug?: string;
 }
 
+export interface ElectionCandidate {
+  name: string;
+  office: string; // 'Mayor' | 'Deputy Mayor' | 'Councillor'
+  votes?: number;
+  votePercent: string;
+  elected: boolean;
+  incumbent?: boolean;
+  slug?: string;
+  note?: string;
+}
+
 export interface MunicipalityDetail {
   name: string;
   slug: string;
@@ -15,6 +26,7 @@ export interface MunicipalityDetail {
   mayor: MunicipalOfficial;
   deputyMayor?: MunicipalOfficial;
   councillors: MunicipalOfficial[];
+  candidates: ElectionCandidate[];
   schoolBoardTrustees: {
     scdsb: string;
     smcdsb: string;
@@ -195,6 +207,15 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Sergio Morales', title: 'Ward 9 Councillor', ward: 'Ward 9' },
       { name: 'Bryn Hamilton', title: 'Ward 10 Councillor', ward: 'Ward 10' }
     ],
+    candidates: [
+      { name: 'Alex Nuttall', office: 'Mayor', votes: 13401, votePercent: '42.66%', elected: true, incumbent: true, slug: 'alex-nuttall' },
+      { name: 'Barry Ward', office: 'Mayor', votes: 12624, votePercent: '40.19%', elected: false, incumbent: false, slug: 'barry-ward', note: 'Former Deputy Mayor & Ward 4 Councillor' },
+      { name: 'Gerry Marshall', office: 'Mayor', votes: 2745, votePercent: '8.74%', elected: false, incumbent: false, slug: 'gerry-marshall', note: 'Former Penetanguishene Mayor & County Warden' },
+      { name: 'Mike McCann', office: 'Mayor', votes: 1700, votePercent: '5.41%', elected: false, incumbent: false, slug: 'mike-mccann', note: 'Former Ward 10 Councillor' },
+      { name: 'Andrew Gordon', office: 'Mayor', votes: 449, votePercent: '1.43%', elected: false, incumbent: false },
+      { name: 'Weldon Hachey', office: 'Mayor', votes: 315, votePercent: '1.00%', elected: false, incumbent: false },
+      { name: 'Rob Haverson', office: 'Mayor', votes: 179, votePercent: '0.57%', elected: false, incumbent: false }
+    ],
     schoolBoardTrustees: {
       scdsb: 'Lynn Strachan (Wards 1–3), Dana Powell (Wards 4–6), Lisa-Marie Wilson (Wards 7–10)',
       smcdsb: 'Susan van Amelsvoort (Wards 1–5), Maria Hardie (Wards 6–10)',
@@ -229,6 +250,11 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Jeff Czetwerzuk', title: 'Ward 3 Councillor', ward: 'Ward 3' },
       { name: 'Tim Lauer', title: 'Ward 4 Councillor', ward: 'Ward 4' },
       { name: 'Janet-Lynne Durnford', title: 'Ward 4 Councillor', ward: 'Ward 4' }
+    ],
+    candidates: [
+      { name: 'Don McIsaac', office: 'Mayor', votes: 4861, votePercent: '57.34%', elected: true, incumbent: true, slug: 'don-mcisaac' },
+      { name: 'Mason Ainsworth', office: 'Mayor', votes: 2878, votePercent: '33.95%', elected: false, incumbent: false, slug: 'mason-ainsworth', note: 'Former Ward 3 Councillor' },
+      { name: 'Rob Kloostra', office: 'Mayor', votes: 738, votePercent: '8.71%', elected: false, incumbent: false, slug: 'rob-kloostra', note: 'Former Ward 1 Councillor' }
     ],
     schoolBoardTrustees: {
       scdsb: 'Jodi Lloyd (Orillia, Ramara, Severn)',
@@ -266,6 +292,11 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Rob Ring', title: 'Councillor (At-Large)' },
       { name: 'Brandon Houston', title: 'Councillor (At-Large)' },
       { name: 'Christopher Baines', title: 'Councillor (At-Large)' }
+    ],
+    candidates: [
+      { name: 'Yvonne Hamlin', office: 'Mayor', votes: 3740, votePercent: '48.0%', elected: true, incumbent: true, slug: 'yvonne-hamelin' },
+      { name: 'Norm Sandberg', office: 'Mayor', votes: 2907, votePercent: '37.3%', elected: false, incumbent: false, slug: 'norm-sandberg', note: 'Former Deputy Mayor' },
+      { name: 'Mariane McLeod', office: 'Mayor', votes: 1146, votePercent: '14.7%', elected: false, incumbent: false, slug: 'mariane-mcleod', note: 'Former Councillor' }
     ],
     schoolBoardTrustees: {
       scdsb: 'Mike Foley (Collingwood & Wasaga Beach)',
@@ -305,6 +336,10 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Robert Saunders', title: 'Ward 6 Councillor', ward: 'Ward 6' },
       { name: 'Fred Drodge', title: 'Ward 7 Councillor', ward: 'Ward 7' }
     ],
+    candidates: [
+      { name: 'Lynn Dollin', office: 'Mayor', votes: 5683, votePercent: '65.6%', elected: true, incumbent: true, slug: 'lynn-dollin' },
+      { name: 'Daniel Davidson', office: 'Mayor', votes: 2981, votePercent: '34.4%', elected: false, incumbent: false, slug: 'daniel-davidson', note: 'Former Ward Councillor' }
+    ],
     schoolBoardTrustees: {
       scdsb: 'Donna Armstrong (Innisfil)',
       smcdsb: 'Tanya Da Silva (Innisfil & Bradford)',
@@ -343,6 +378,11 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Nickolas Harper', title: 'Ward 6 Councillor', ward: 'Ward 6' },
       { name: 'Peter Dykie', title: 'Ward 7 Councillor', ward: 'Ward 7' }
     ],
+    candidates: [
+      { name: 'James Leduc', office: 'Mayor', votes: 3293, votePercent: '52.8%', elected: true, incumbent: true, slug: 'james-leduc' },
+      { name: 'Mauro Di Giovanni', office: 'Mayor', votes: 2217, votePercent: '35.6%', elected: false, incumbent: false, slug: 'mauro-di-giovanni' },
+      { name: 'Antonio Garcia', office: 'Mayor', votes: 724, votePercent: '11.6%', elected: false, incumbent: false }
+    ],
     schoolBoardTrustees: {
       scdsb: 'Debbie Connors (Bradford West Gwillimbury)',
       smcdsb: 'Tanya Da Silva (Innisfil & Bradford)',
@@ -380,6 +420,10 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Jadelyn Rawn', title: 'Ward 3 Councillor', ward: 'Ward 3' },
       { name: 'Bill Meridis', title: 'Ward 3 Councillor', ward: 'Ward 3' }
     ],
+    candidates: [
+      { name: 'Bill Gordon', office: 'Mayor', votes: 3366, votePercent: '60.1%', elected: true, incumbent: true, slug: 'bill-gordon' },
+      { name: 'Stewart Strathearn', office: 'Mayor', votes: 2234, votePercent: '39.9%', elected: false, incumbent: false, slug: 'stewart-strathearn', note: 'Former Mayor (2018–2022)' }
+    ],
     schoolBoardTrustees: {
       scdsb: 'Robin Talbot (Midland, Penetanguishene, Tay, Tiny)',
       smcdsb: 'Kelly Holmgren (Midland, Penetanguishene, Tay, Tiny)',
@@ -415,6 +459,11 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Sasha-Rose Dileo', title: 'Councillor (At-Large)' },
       { name: 'Ellen Anderson', title: 'Councillor (At-Large)' },
       { name: 'Faye Ego', title: 'Councillor (At-Large)' }
+    ],
+    candidates: [
+      { name: 'Brian Smith', office: 'Mayor', votes: 4374, votePercent: '55.48%', elected: true, incumbent: true, slug: 'brian-smith' },
+      { name: 'Nina Bifolchi', office: 'Mayor', votes: 2427, votePercent: '30.78%', elected: false, incumbent: false, slug: 'nina-bifolchi', note: 'Former Mayor (2018–2022)' },
+      { name: 'Leslie Farkas', office: 'Mayor', votes: 1084, votePercent: '13.75%', elected: false, incumbent: false, slug: 'leslie-farkas' }
     ],
     schoolBoardTrustees: {
       scdsb: 'Mike Foley (Collingwood & Wasaga Beach)',
@@ -455,6 +504,10 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Shira Harrison McIntyre', title: 'Ward 7 Councillor', ward: 'Ward 7' },
       { name: 'Andrea Sainsbury', title: 'Ward 8 Councillor', ward: 'Ward 8' }
     ],
+    candidates: [
+      { name: 'Richard Norcross', office: 'Mayor', votes: 4498, votePercent: '57.6%', elected: true, incumbent: true, slug: 'richard-norcross' },
+      { name: 'Donna Jebb', office: 'Mayor', votes: 3307, votePercent: '42.4%', elected: false, incumbent: false, slug: 'donna-jebb', note: 'Former Ward Councillor' }
+    ],
     schoolBoardTrustees: {
       scdsb: 'Sarah Beitz (New Tecumseth)',
       smcdsb: 'Janice Hutchison (New Tecumseth, Essa, Adjala-Tosorontio)',
@@ -490,6 +543,10 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Brad Thompson', title: 'Ward 3 Councillor', ward: 'Ward 3' },
       { name: 'Anita Moore', title: 'Ward 4 Councillor', ward: 'Ward 4' },
       { name: 'Phil Fisher', title: 'Ward 5 Councillor', ward: 'Ward 5' }
+    ],
+    candidates: [
+      { name: 'Jennifer Coughlin', office: 'Mayor', votes: 3091, votePercent: '58.7%', elected: true, incumbent: true, slug: 'jennifer-coughlin' },
+      { name: 'Perry Ritchie', office: 'Mayor', votes: 2176, votePercent: '41.3%', elected: false, incumbent: false, slug: 'perry-ritchie' }
     ],
     schoolBoardTrustees: {
       scdsb: 'Liz Grummett (Oro-Medonte & Springwater)',
@@ -527,6 +584,9 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Gary Hetherington', title: 'Ward 4 Councillor', ward: 'Ward 4' },
       { name: 'Sherri Bell', title: 'Ward 5 Councillor', ward: 'Ward 5' }
     ],
+    candidates: [
+      { name: 'Basil Clarke', office: 'Mayor', votePercent: '100% (Acclaimed)', elected: true, incumbent: true, slug: 'basil-clarke', note: 'Acclaimed Mayor & Simcoe County Warden' }
+    ],
     schoolBoardTrustees: {
       scdsb: 'Jodi Lloyd (Orillia, Ramara, Severn)',
       smcdsb: 'Jill Colin',
@@ -562,6 +622,10 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Cathy Keane', title: 'Ward 3 Councillor', ward: 'Ward 3' },
       { name: 'David Clark', title: 'Ward 4 Councillor', ward: 'Ward 4' },
       { name: 'Richard Schell', title: 'Ward 5 Councillor', ward: 'Ward 5' }
+    ],
+    candidates: [
+      { name: 'Randy Greenlaw', office: 'Mayor', votes: 3674, votePercent: '52.8%', elected: true, incumbent: true, slug: 'randy-greenlaw' },
+      { name: 'Harry Hughes', office: 'Mayor', votes: 3284, votePercent: '47.2%', elected: false, incumbent: false, slug: 'harry-hughes', note: 'Former Mayor (2006–2022)' }
     ],
     schoolBoardTrustees: {
       scdsb: 'Liz Grummett (Oro-Medonte & Springwater)',
@@ -599,6 +663,10 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Bonita Desroches', title: 'Councillor (At-Large)' },
       { name: 'Jill St. Amant', title: 'Councillor (At-Large)' }
     ],
+    candidates: [
+      { name: 'Doug Rawson', office: 'Mayor', votes: 1848, votePercent: '60.2%', elected: true, incumbent: true, slug: 'doug-rawson' },
+      { name: 'Jill St. Amant', office: 'Mayor', votes: 1221, votePercent: '39.8%', elected: false, incumbent: false, slug: 'jill-st-amant', note: 'Former Deputy Mayor' }
+    ],
     schoolBoardTrustees: {
       scdsb: 'Robin Talbot',
       smcdsb: 'Kelly Holmgren',
@@ -634,6 +702,10 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Philip Brennan', title: 'Ward 3 Councillor', ward: 'Ward 3' },
       { name: 'Dan Maitland', title: 'Ward 4 Councillor', ward: 'Ward 4' },
       { name: 'Sarah Valiquette-Thompson', title: 'Ward 5 Councillor', ward: 'Ward 5' }
+    ],
+    candidates: [
+      { name: 'Mike Burkett', office: 'Mayor', votes: 2782, votePercent: '63.4%', elected: true, incumbent: true, slug: 'mike-burkett' },
+      { name: 'Mark Taylor', office: 'Mayor', votes: 1605, votePercent: '36.6%', elected: false, incumbent: false, slug: 'mark-taylor' }
     ],
     schoolBoardTrustees: {
       scdsb: 'Jodi Lloyd',
@@ -671,6 +743,9 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Barry Norris', title: 'Councillor (At-Large)' },
       { name: 'Judy Larmand', title: 'Councillor (At-Large)' }
     ],
+    candidates: [
+      { name: 'Ted Walker', office: 'Mayor', votePercent: '100% (Acclaimed)', elected: true, incumbent: true, slug: 'ted-walker', note: 'Acclaimed Mayor' }
+    ],
     schoolBoardTrustees: {
       scdsb: 'Robin Talbot',
       smcdsb: 'Kelly Holmgren',
@@ -704,6 +779,11 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Dave Brunelle', title: 'Councillor (At-Large)' },
       { name: 'Kelly Helowka', title: 'Councillor (At-Large)' },
       { name: 'Steffen Walma', title: 'Councillor (Deputy Mayor)' }
+    ],
+    candidates: [
+      { name: 'David Evans', office: 'Mayor', votes: 3845, votePercent: '52.1%', elected: true, incumbent: true, slug: 'david-evans' },
+      { name: 'Tony Mintoff', office: 'Mayor', votes: 2192, votePercent: '29.7%', elected: false, incumbent: false, slug: 'tony-mintoff', note: 'Former Councillor' },
+      { name: 'George Lawrence', office: 'Mayor', votes: 1348, votePercent: '18.2%', elected: false, incumbent: false, slug: 'george-lawrence' }
     ],
     schoolBoardTrustees: {
       scdsb: 'Robin Talbot',
@@ -741,6 +821,11 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Robert McArthur', title: 'Ward 4 Councillor', ward: 'Ward 4' },
       { name: 'Marty Beelen', title: 'Ward 5 Councillor', ward: 'Ward 5' }
     ],
+    candidates: [
+      { name: 'Doug Measures', office: 'Mayor', votePercent: '100% (Acclaimed)', elected: true, incumbent: true, slug: 'doug-measures', note: 'Acclaimed Mayor' },
+      { name: 'Paul Van Staveren', office: 'Deputy Mayor', votes: 2514, votePercent: '58.2%', elected: true, incumbent: true },
+      { name: 'Chuck Arrand', office: 'Deputy Mayor', votes: 1804, votePercent: '41.8%', elected: false, incumbent: false }
+    ],
     schoolBoardTrustees: {
       scdsb: 'Brandy Rafeek',
       smcdsb: 'Shawn Cooper',
@@ -775,6 +860,10 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Liana Maltby', title: 'Ward 2 Councillor', ward: 'Ward 2' },
       { name: 'Henry Sander', title: 'Ward 3 Councillor', ward: 'Ward 3' },
       { name: 'Shawn Bubel', title: 'Ward 4 Councillor', ward: 'Ward 4' }
+    ],
+    candidates: [
+      { name: 'Sandie Macdonald', office: 'Mayor', votes: 2419, votePercent: '68.2%', elected: true, incumbent: true, slug: 'sandie-macdonald' },
+      { name: 'Michael Smith', office: 'Mayor', votes: 1128, votePercent: '31.8%', elected: false, incumbent: false, slug: 'michael-smith' }
     ],
     schoolBoardTrustees: {
       scdsb: 'Brandy Rafeek',
@@ -811,6 +900,10 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       { name: 'Bob Meadows', title: 'Ward 3 Councillor', ward: 'Ward 3' },
       { name: 'Adam Caswell', title: 'Ward 4 Councillor', ward: 'Ward 4' },
       { name: 'Mary Small Brett', title: 'Ward 5 Councillor', ward: 'Ward 5' }
+    ],
+    candidates: [
+      { name: 'Scott Anderson', office: 'Mayor', votes: 1892, votePercent: '54.1%', elected: true, incumbent: true, slug: 'scott-anderson' },
+      { name: 'Floyd Pinto', office: 'Mayor', votes: 1605, votePercent: '45.9%', elected: false, incumbent: false, slug: 'floyd-pinto', note: 'Former Mayor (2018–2022)' }
     ],
     schoolBoardTrustees: {
       scdsb: 'Brandy Rafeek',
