@@ -8,12 +8,13 @@ interface Props {
   image?: string;
   slug: string;
   elected?: boolean;
+  incumbent?: boolean;
   role?: string;
   votePercent?: string;
   level?: string;
 }
 
-const { name, position, party, riding, municipality, image, slug, elected, role, votePercent, level } = Astro.props;
+const { name, position, party, riding, municipality, image, slug, elected, incumbent, role, votePercent, level } = Astro.props;
 
 // Determine party styling class
 const getPartyClass = (p?: string) => {
@@ -29,7 +30,7 @@ const getPartyClass = (p?: string) => {
 const partyClass = getPartyClass(party);
 ---
 
-<article class={`candidate-card ${elected ? 'card-elected' : ''}`}>
+<article class="candidate-card">
   <a href={`/candidate/${slug}`}>
     <div class="card-image">
       {image ? (
@@ -39,14 +40,8 @@ const partyClass = getPartyClass(party);
           <span>{name.charAt(0)}</span>
         </div>
       )}
-      {elected ? (
-        <span class="badge-elected">
-          {level === 'municipal' || position.toLowerCase().includes('mayor') || position.toLowerCase().includes('warden') ? 'In Office' : 'Elected MPP'}
-        </span>
-      ) : (
-        <span class="badge-candidate">
-          {level === 'municipal' || position.toLowerCase().includes('mayor') ? 'Mayoral Candidate' : 'Candidate'}
-        </span>
+      {incumbent && (
+        <span class="badge-incumbent">Incumbent</span>
       )}
     </div>
     <div class="card-content">
@@ -96,10 +91,6 @@ const partyClass = getPartyClass(party);
     border-color: var(--primary);
   }
 
-  .card-elected {
-    border-top: 4px solid var(--secondary);
-  }
-
   .candidate-card a {
     display: flex;
     flex-direction: column;
@@ -133,32 +124,17 @@ const partyClass = getPartyClass(party);
     background: linear-gradient(135deg, #475569 0%, #334155 100%);
   }
 
-  .badge-elected {
+  .badge-incumbent {
     position: absolute;
     top: 0.75rem;
     right: 0.75rem;
-    background: #1e293b;
+    background: #c2410c; /* dark orange */
     color: white;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    padding: 0.25rem 0.6rem;
+    padding: 0.2rem 0.55rem;
     border-radius: 9999px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-
-  .badge-candidate {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    background: #475569;
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 0.25rem 0.6rem;
-    border-radius: 9999px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.18);
     letter-spacing: 0.5px;
     text-transform: uppercase;
   }

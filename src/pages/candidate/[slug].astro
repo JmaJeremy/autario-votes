@@ -65,14 +65,9 @@ const partyClass = getPartyClass(candidate.data.party);
       <div class="candidate-info">
         <div class="name-row">
           <h1>{candidate.data.name}</h1>
-          {candidate.data.elected && (
-            <span class={`badge-tag ${candidate.data.level === 'municipal' ? 'tag-municipal' : 'tag-elected'}`}>
-              {candidate.data.level === 'municipal' 
-                ? (candidate.data.position.includes('Mayor') ? 'Elected Mayor' : (candidate.data.position.includes('Trustee') ? 'Elected Trustee' : 'Elected Official')) 
-                : 'Elected MPP'}
-            </span>
+          {(candidate.data.incumbent || candidate.data.elected) && (
+            <span class="badge-tag tag-incumbent">Incumbent</span>
           )}
-          {candidate.data.incumbent && <span class="badge-tag tag-incumbent">Incumbent</span>}
         </div>
 
         {candidate.data.role && (
@@ -226,19 +221,9 @@ const partyClass = getPartyClass(candidate.data.party);
     letter-spacing: 0.5px;
   }
 
-  .tag-elected {
-    background: #1e293b;
-    color: white;
-  }
-
-  .tag-municipal {
-    background: var(--secondary);
-    color: white;
-  }
-
   .tag-incumbent {
-    background: #e2e8f0;
-    color: #334155;
+    background: #c2410c;
+    color: white;
   }
 
   .role-title {

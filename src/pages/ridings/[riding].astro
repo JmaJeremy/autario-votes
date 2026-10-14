@@ -1,7 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import CandidateCard from '../../components/CandidateCard.astro';
 import { RIDINGS, type Riding } from '../../data/ridings';
 import { getCollection } from 'astro:content';
+import { sortByLastName } from '../../utils/sorting';
 
 export async function getStaticPaths() {
   return RIDINGS.map((riding) => ({
@@ -23,11 +25,25 @@ const ridingCandidates = allCandidates.filter(c => {
   return c.data.riding.toLowerCase().includes(riding.slug.replace('-', ' ').toLowerCase()) ||
          c.data.riding.toLowerCase().includes(riding.name.toLowerCase());
 });
+
+const sortedCandidates = sortByLastName(
+  ridingCandidates.map(c => ({
+    name: c.data.name,
+    position: c.data.position,
+    party: c.data.party,
+    riding: c.data.riding,
+    municipality: c.data.municipality,
+    image: c.data.image,
+    slug: c.slug,
+    incumbent: c.data.incumbent || c.data.elected,
+    role: c.data.role
+  }))
+);
 ---
 
 <Layout 
-  title={`${riding.name} - Provincial Riding Profile - Autario Votes`}
-  description={`Provincial electoral district profile for ${riding.name}: MPP ${riding.mpp}, election results, and municipalities.`}
+  title={`${riding.name} - Provincial Riding Race & Candidates - Autario Votes`}
+  description={`Provincial race profile for ${riding.name}: candidate pool in alphabetical order by last name, riding communities, and election info.`}
 >
   <div class="container page-content">
     <nav class="breadcrumbs">
@@ -40,14 +56,57 @@ const ridingCandidates = allCandidates.filter(c => {
       <p class="riding-desc">{riding.description}</p>
     </header>
 
-    <!-- Sitting MPP Highlight Banner -->
+    <!-- 1. Candidates Pool Section: Leads directly on the page! -->
+    <section class="riding-candidates-section">
+      <div class="section-title-wrap">
+        <h2>Candidates Pool for Member of Provincial Parliament (MPP)</h2>
+        <span class="count-pill">{sortedCandidates.length} Candidates</span>
+      </div>
+      <p class="section-sub">
+        Candidates contesting {riding.name}, listed in alphabetical order by last name with subtle flags for incumbents:
+      </p>
+
+      <div class="candidates-grid">
+        {sortedCandidates.map((c) => (
+          <CandidateCard
+            name={c.name}
+            position={c.position}
+            party={c.party}
+            riding={c.riding}
+            municipality={c.municipality}
+            image={c.image}
+            slug={c.slug}
+            incumbent={c.incumbent}
+            role={c.role}
+          />
+        ))}
+      </div>
+    </section>
+
+    <!-- 2. Geographic Coverage -->
+    <section class="geo-section">
+      <h2>Municipalities & Communities Included</h2>
+      <p>
+        The riding of {riding.name} includes the following municipal areas in Simcoe County:
+      </p>
+      <div class="mun-grid">
+        {riding.municipalities.map((m) => (
+          <div class="mun-card">
+            <h3>{m}</h3>
+            <p>Electoral area in {riding.name}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- 3. Sitting MPP Reference Banner -->
     <section class="mpp-feature-card">
       <div class="mpp-feature-left">
         <div class="mpp-feature-avatar">
           <span>{riding.mpp.charAt(0)}</span>
         </div>
         <div class="mpp-feature-info">
-          <span class="eyebrow-mpp">Current Member of Provincial Parliament</span>
+          <span class="eyebrow-mpp">Current Legislative Representation (Expiring Term)</span>
           <h2><a href={`/candidate/${riding.mppSlug}`}>{riding.mpp}</a></h2>
           <span class="badge-party">{riding.party}</span>
           <p class="role-text">{riding.role}</p>
@@ -61,11 +120,11 @@ const ridingCandidates = allCandidates.filter(c => {
       </div>
     </section>
 
-    <!-- Election Results Section -->
+    <!-- 4. Previous Election Results Section -->
     <section class="results-section">
       <div class="results-header-block">
         <div>
-          <h2>Election Results</h2>
+          <h2>Previous Election Results (Historical Reference)</h2>
           <p class="results-sub">{riding.recentElection.title} — {riding.recentElection.date}</p>
         </div>
         <div class="turnout-pill">
@@ -88,7 +147,7 @@ const ridingCandidates = allCandidates.filter(c => {
           </thead>
           <tbody>
             {riding.recentElection.results.map((res) => (
-              <tr class={res.elected ? 'row-winner' : ''}>
+              <tr>
                 <td class="cell-candidate">
                   <strong>{res.candidate}</strong>
                 </td>
@@ -100,15 +159,15 @@ const ridingCandidates = allCandidates.filter(c => {
                 <td class="cell-votes">{res.votes.toLocaleString()}</td>
                 <td class="cell-bar-pct">
                   <div class="table-bar-wrap">
-                    <div class="table-bar-fill" style={`width: ${res.percent}; background-color: ${res.elected ? '#334155' : '#94a3b8'};`}></div>
+                    <div class="table-bar-fill" style={`width: ${res.percent}; background-color: #475569;`}></div>
                     <span class="table-bar-text">{res.percent}</span>
                   </div>
                 </td>
                 <td>
                   {res.elected ? (
-                    <span class="pill-won">✓ Elected</span>
+                    <span class="pill-won">Elected (2025)</span>
                   ) : (
-                    <span class="pill-runner">Defeated</span>
+                    <span class="pill-runner">Candidate</span>
                   )}
                 </td>
               </tr>
@@ -117,38 +176,6 @@ const ridingCandidates = allCandidates.filter(c => {
         </table>
       </div>
     </section>
-
-    <!-- Geographic Coverage -->
-    <section class="geo-section">
-      <h2>Municipalities & Communities Included</h2>
-      <p>
-        The riding of {riding.name} includes the following municipal areas in Simcoe County:
-      </p>
-      <div class="mun-grid">
-        {riding.municipalities.map((m) => (
-          <div class="mun-card">
-            <h3>{m}</h3>
-            <p>Represented provincially by {riding.name}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <!-- Candidate Profiles from Collection -->
-    {ridingCandidates.length > 0 && (
-      <section class="riding-candidates-section">
-        <h2>Candidates & Representatives Profiled</h2>
-        <div class="candidate-links-grid">
-          {ridingCandidates.map((c) => (
-            <a href={`/candidate/${c.slug}`} class="cand-link-card">
-              <div class="cand-link-title">{c.data.name}</div>
-              <div class="cand-link-party">{c.data.party || 'Independent'}</div>
-              <span class="cand-link-arrow">→</span>
-            </a>
-          ))}
-        </div>
-      </section>
-    )}
 
     <div class="back-nav">
       <a href="/ridings">← Back to All Provincial Ridings</a>
@@ -472,23 +499,35 @@ const ridingCandidates = allCandidates.filter(c => {
     margin-bottom: 3.5rem;
   }
 
-  .candidate-links-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  .section-title-wrap {
+    display: flex;
+    align-items: center;
     gap: 1rem;
-    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
   }
 
-  .cand-link-card {
-    display: flex;
-    flex-direction: column;
-    padding: 1.25rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    text-decoration: none;
-    color: inherit;
-    position: relative;
-    transition: transform 0.2s, border-color 0.2s;
+  .section-title-wrap h2 {
+    font-size: 1.75rem;
+    margin: 0;
+    color: var(--text);
+  }
+
+  .count-pill {
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+  }
+
+  .candidates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.75rem;
+    margin-top: 1.5rem;
   }
 
   .cand-link-card:hover {

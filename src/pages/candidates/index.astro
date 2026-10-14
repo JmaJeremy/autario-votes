@@ -3,161 +3,135 @@ import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import CandidateCard from '../../components/CandidateCard.astro';
 import { RIDINGS } from '../../data/ridings';
-import { COUNTY_COUNCIL, MUNICIPALITIES_DATA, SCHOOL_BOARDS } from '../../data/municipal';
+import { MUNICIPALITIES_DATA, SCHOOL_BOARDS } from '../../data/municipal';
+import { sortByLastName } from '../../utils/sorting';
 
 const allContentCandidates = await getCollection('candidates');
 
 // Separate content candidates by level
-const provincialCandidates = allContentCandidates.filter(c => c.data.level !== 'municipal');
-const provincialMPPs = provincialCandidates.filter(c => c.data.elected);
+const provincialContent = allContentCandidates.filter(c => c.data.level !== 'municipal');
 
-// Municipal Leaders & Candidates (Mayors, Challengers, Councillors, Trustees)
-const allMayoralCandidates = MUNICIPALITIES_DATA.flatMap(m =>
+// Flatten all mayoral candidates across the 18 municipalities
+const rawMayoralCandidates = MUNICIPALITIES_DATA.flatMap(m =>
   (m.candidates || []).map(c => ({
     name: c.name,
     office: c.office,
     municipality: m.name,
     munSlug: m.slug,
-    votes: c.votes,
-    votePercent: c.votePercent,
-    elected: c.elected,
-    incumbent: c.incumbent,
+    incumbent: c.incumbent || c.elected,
     slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
-    note: c.note,
-    email: c.elected ? m.mayor.email : undefined,
-    phone: c.elected ? m.mayor.phone : undefined
+    note: c.note
   }))
 );
 
-const municipalMayors = allMayoralCandidates.filter(c => c.elected);
-const municipalChallengers = allMayoralCandidates.filter(c => !c.elected);
-const provincialChallengers = provincialCandidates.filter(c => !c.data.elected);
+// Sort each pool in alphabetical order by last name
+const sortedMayoralCandidates = sortByLastName(rawMayoralCandidates);
+const municipalIncumbents = sortedMayoralCandidates.filter(c => c.incumbent);
+const municipalChallengers = sortedMayoralCandidates.filter(c => !c.incumbent);
 
-// Build list of all councillors
-const municipalCouncillors = MUNICIPALITIES_DATA.flatMap(m => 
-  m.councillors.map(c => ({
-    name: c.name,
-    title: c.title,
-    municipality: m.name,
-    munSlug: m.slug,
-    ward: c.ward || 'At-Large',
-    type: 'Councillor'
+// Councillors pool, sorted by last name
+const sortedCouncillors = sortByLastName(
+  MUNICIPALITIES_DATA.flatMap(m => 
+    m.councillors.map(c => ({
+      name: c.name,
+      title: c.title,
+      municipality: m.name,
+      munSlug: m.slug,
+      ward: c.ward || 'At-Large',
+      type: 'Councillor'
+    }))
+  )
+);
+
+// Trustees pool, sorted by last name
+const sortedTrustees = sortByLastName(
+  SCHOOL_BOARDS.flatMap(b =>
+    b.trustees.map(t => ({
+      name: t.trustee,
+      title: `Trustee (${b.name})`,
+      boardName: b.name,
+      boardType: b.type,
+      area: t.area,
+      type: 'Trustee'
+    }))
+  )
+);
+
+// Provincial candidate pool, sorted by last name
+const sortedProvincialCandidates = sortByLastName(
+  provincialContent.map(c => ({
+    name: c.data.name,
+    position: c.data.position,
+    party: c.data.party,
+    riding: c.data.riding,
+    municipality: c.data.municipality,
+    image: c.data.image,
+    slug: c.slug,
+    incumbent: c.data.incumbent || c.data.elected,
+    role: c.data.role
   }))
 );
 
-// Build list of all trustees
-const allTrustees = SCHOOL_BOARDS.flatMap(b =>
-  b.trustees.map(t => ({
-    name: t.trustee,
-    title: `Trustee (${b.name})`,
-    boardName: b.name,
-    boardType: b.type,
-    area: t.area,
-    type: 'Trustee'
-  }))
-);
+const provincialIncumbents = sortedProvincialCandidates.filter(c => c.incumbent);
+const provincialChallengers = sortedProvincialCandidates.filter(c => !c.incumbent);
 ---
 
 <Layout 
-  title="Candidates & Representatives Directory - Autario Votes"
-  description="Explore sitting MPPs, provincial candidates, mayors, wardens, municipal councillors, and school board trustees across Simcoe County."
+  title="Candidate Pools & Election Directories - Autario Votes"
+  description="Explore upcoming election candidates across Simcoe County, grouped by race and position, sorted in alphabetical order by last name with subtle flags for incumbents."
 >
   <div class="container page-content">
     <!-- ========================================== -->
-    <!-- 1. MUNICIPAL LEADERSHIP VIEW               -->
+    <!-- 1. MUNICIPAL CANDIDATES DIRECTORY          -->
     <!-- ========================================== -->
     <div class="municipal-only">
       <div class="header-section">
-        <span class="eyebrow eyebrow-mun">Simcoe County Local Leadership</span>
-        <h1>Mayors, Wardens, Councillors & Trustees</h1>
+        <span class="eyebrow eyebrow-mun">Simcoe County 2026 Municipal Vote</span>
+        <h1>Municipal Candidate Pools & Directories</h1>
         <p class="intro">
-          Meet the elected local leadership serving Simcoe County's 18 municipalities, County of Simcoe Council, and the 4 regional school boards. Municipal general elections take place every 4 years (next on <strong>October 26, 2026</strong>).
+          Explore candidate pools for the <strong>October 26, 2026</strong> municipal general elections across Simcoe County's 18 local municipalities and 4 school boards. Candidates in each race are listed in alphabetical order by last name, with a subtle flag for incumbents.
         </p>
       </div>
 
-      <!-- County Council Warden Spotlight -->
-      <section class="section-block">
-        <div class="warden-spotlight-card">
-          <div class="warden-card-header">
-            <span class="badge-county">County of Simcoe Council</span>
-            <h2>Warden & Deputy Warden (2023–2026 Term)</h2>
-            <p>
-              County of Simcoe Council is composed of 32 members: the Mayors and Deputy Mayors from the 16 member municipalities (excluding the separated cities of Barrie and Orillia).
-            </p>
-          </div>
-          <div class="warden-cards-row">
-            <div class="official-card">
-              <div class="card-avatar">BC</div>
-              <div class="card-meta">
-                <span class="role-pill">Head of County Council</span>
-                <h3><a href={`/candidate/${COUNTY_COUNCIL.warden.slug}`}>{COUNTY_COUNCIL.warden.name}</a></h3>
-                <p class="title-text">{COUNTY_COUNCIL.warden.title}</p>
-                <p class="sub-text">Mayor of {COUNTY_COUNCIL.warden.mayorOf} • {COUNTY_COUNCIL.warden.term}</p>
-                <p class="contact-text">📞 {COUNTY_COUNCIL.warden.phone} • ✉️ {COUNTY_COUNCIL.warden.email}</p>
-                <a href={`/candidate/${COUNTY_COUNCIL.warden.slug}`} class="link-profile">View Warden Profile →</a>
-              </div>
-            </div>
-
-            <div class="official-card">
-              <div class="card-avatar">JC</div>
-              <div class="card-meta">
-                <span class="role-pill">Deputy Head of Council</span>
-                <h3><a href={`/candidate/${COUNTY_COUNCIL.deputyWarden.slug}`}>{COUNTY_COUNCIL.deputyWarden.name}</a></h3>
-                <p class="title-text">{COUNTY_COUNCIL.deputyWarden.title}</p>
-                <p class="sub-info">Mayor of {COUNTY_COUNCIL.deputyWarden.mayorOf} • {COUNTY_COUNCIL.deputyWarden.term}</p>
-                <p class="contact-text">📞 {COUNTY_COUNCIL.deputyWarden.phone} • ✉️ {COUNTY_COUNCIL.deputyWarden.email}</p>
-                <a href={`/candidate/${COUNTY_COUNCIL.deputyWarden.slug}`} class="link-profile">View Deputy Warden Profile →</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <!-- Category Tabs for Municipal Directory -->
       <section class="section-block">
-        <div class="section-title-wrap">
-          <h2>Municipal Directory by Role</h2>
-        </div>
-
         <div class="role-tabs" id="mun-role-tabs">
-          <button class="tab-btn active" data-tab="mayors">👑 Mayors & Candidates ({allMayoralCandidates.length})</button>
-          <button class="tab-btn" data-tab="councillors">👥 Municipal Councillors ({municipalCouncillors.length})</button>
-          <button class="tab-btn" data-tab="trustees">🎒 School Board Trustees ({allTrustees.length})</button>
+          <button class="tab-btn active" data-tab="mayors">👑 Mayors & Candidates ({sortedMayoralCandidates.length})</button>
+          <button class="tab-btn" data-tab="councillors">👥 Municipal Councillors ({sortedCouncillors.length})</button>
+          <button class="tab-btn" data-tab="trustees">🎒 School Board Trustees ({sortedTrustees.length})</button>
         </div>
 
         <!-- 1. MAYORS & CANDIDATES TAB CONTENT -->
         <div class="tab-content active" id="tab-mayors">
           <div class="status-filters-wrap" id="mun-status-filters">
-            <span class="filter-label">Filter:</span>
+            <span class="filter-label">Filter Pool:</span>
             <div class="filter-buttons">
-              <button class="filter-btn active" data-status="all">All Candidates ({allMayoralCandidates.length})</button>
-              <button class="filter-btn" data-status="elected">In Office / Mayors ({municipalMayors.length})</button>
-              <button class="filter-btn" data-status="challenger">Challengers & Contenders ({municipalChallengers.length})</button>
+              <button class="filter-btn active" data-status="all">All Candidates ({sortedMayoralCandidates.length})</button>
+              <button class="filter-btn" data-status="incumbent">Incumbents ({municipalIncumbents.length})</button>
+              <button class="filter-btn" data-status="challenger">Challengers ({municipalChallengers.length})</button>
             </div>
           </div>
 
           <div class="officials-grid" id="mun-candidates-grid">
-            {allMayoralCandidates.map(c => {
+            {sortedMayoralCandidates.map(c => {
               const matchedCandidate = allContentCandidates.find(cand => cand.slug === c.slug);
               const imgUrl = matchedCandidate?.data?.image;
               const hasProfile = !!matchedCandidate;
               return (
-                <div class="official-card mun-candidate-card" data-status={c.elected ? 'elected' : 'challenger'}>
+                <div class="official-card mun-candidate-card" data-status={c.incumbent ? 'incumbent' : 'challenger'}>
                   {imgUrl ? (
                     <img src={imgUrl} alt={c.name} class="card-avatar-img" />
                   ) : (
-                    <div class={`card-avatar ${c.elected ? 'avatar-mayor' : 'avatar-challenger'}`}>
+                    <div class="card-avatar avatar-challenger">
                       {c.name.charAt(0)}
                     </div>
                   )}
                   <div class="card-meta">
                     <div class="status-row">
-                      <span class={c.elected ? 'badge-role role-elected' : 'badge-role role-challenger'}>
-                        {c.elected ? 'In Office (Mayor)' : 'Mayoral Candidate'}
-                      </span>
-                      {c.votePercent && (
-                        <span class="vote-tag">{typeof c.votePercent === 'number' ? `${c.votePercent}%` : c.votePercent}</span>
+                      {c.incumbent && (
+                        <span class="flag-incumbent">Incumbent</span>
                       )}
+                      <span class="office-tag">{c.office} Candidate</span>
                     </div>
                     <h3>
                       {hasProfile ? (
@@ -166,13 +140,8 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
                         c.name
                       )}
                     </h3>
-                    <p class="title-text">{c.office}</p>
                     <p class="sub-text">📍 <a href={`/municipalities/${c.munSlug}`}>{c.municipality}</a></p>
-                    {c.votes && c.votes > 0 ? (
-                      <p class="votes-text">🗳️ {c.votes.toLocaleString()} votes</p>
-                    ) : null}
-                    {c.phone && <p class="contact-text">📞 {c.phone}</p>}
-                    {c.email && <p class="contact-text">✉️ {c.email}</p>}
+                    {c.note && <p class="cand-note-text">{c.note}</p>}
                     {hasProfile ? (
                       <a href={`/candidate/${c.slug}`} class="link-profile">View Profile →</a>
                     ) : (
@@ -188,7 +157,7 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
         <!-- 2. COUNCILLORS TAB CONTENT -->
         <div class="tab-content" id="tab-councillors">
           <div class="officials-grid">
-            {municipalCouncillors.map(c => (
+            {sortedCouncillors.map(c => (
               <div class="official-card">
                 <div class="card-avatar avatar-councillor">{c.name.charAt(0)}</div>
                 <div class="card-meta">
@@ -205,7 +174,7 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
         <!-- 3. SCHOOL BOARD TRUSTEES TAB CONTENT -->
         <div class="tab-content" id="tab-trustees">
           <div class="officials-grid">
-            {allTrustees.map(t => {
+            {sortedTrustees.map(t => {
               const trusteeSlug = t.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
               const matchedTrustee = allContentCandidates.find(c => c.slug === trusteeSlug);
               return (
@@ -243,54 +212,20 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
     <!-- ========================================== -->
     <div class="provincial-only">
       <div class="header-section">
-        <span class="eyebrow">Provincial Representatives</span>
-        <h1>Simcoe County MPPs & Candidates</h1>
+        <span class="eyebrow">Upcoming Provincial General Election</span>
+        <h1>Simcoe County Provincial Candidates</h1>
         <p class="intro">
-          Browse the 5 current sitting Members of Provincial Parliament (MPPs) representing Simcoe County in Queen's Park, 
-          as well as candidates who contested the <strong>44th Ontario General Election (February 27, 2025)</strong> and the 
-          <strong>York—Simcoe By-Election (September 3, 2026)</strong>.
+          Browse candidates contesting the 5 provincial electoral districts in Simcoe County for Member of Provincial Parliament (MPP). Candidates are listed in alphabetical order by last name with subtle flags for incumbents.
         </p>
       </div>
 
-      <!-- Sitting MPPs Section -->
-      <section class="section-block">
-        <div class="section-title-wrap">
-          <h2>Sitting Members of Provincial Parliament (MPPs)</h2>
-          <span class="count-pill">5 Elected MPPs</span>
-        </div>
-        <p class="section-intro">
-          All 5 provincial electoral districts in Simcoe County are currently held by the Progressive Conservative Party of Ontario.
-        </p>
-
-        <div class="candidates-grid">
-          {provincialMPPs.map((candidate) => (
-            <CandidateCard
-              name={candidate.data.name}
-              position={candidate.data.position}
-              party={candidate.data.party}
-              riding={candidate.data.riding}
-              municipality={candidate.data.municipality}
-              image={candidate.data.image}
-              slug={candidate.slug}
-              elected={candidate.data.elected}
-              role={candidate.data.role}
-              votePercent={candidate.data.votePercent}
-            />
-          ))}
-        </div>
-      </section>
-
       <!-- All Provincial Candidates by Riding & Status Filter -->
       <section class="section-block">
-        <div class="section-title-wrap">
-          <h2>All Provincial Candidates ({provincialCandidates.length})</h2>
-        </div>
-
         <div class="filters-container">
           <span class="filter-label">Filter by Status:</span>
           <div class="filter-buttons" id="prov-status-filters">
-            <button class="filter-btn active" data-status="all">All Candidates ({provincialCandidates.length})</button>
-            <button class="filter-btn" data-status="elected">Sitting MPPs ({provincialMPPs.length})</button>
+            <button class="filter-btn active" data-status="all">All Candidates ({sortedProvincialCandidates.length})</button>
+            <button class="filter-btn" data-status="incumbent">Incumbents ({provincialIncumbents.length})</button>
             <button class="filter-btn" data-status="challenger">Challengers ({provincialChallengers.length})</button>
           </div>
         </div>
@@ -308,26 +243,25 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
         </div>
 
         <div class="candidates-grid" id="prov-candidates-roster">
-          {provincialCandidates.map((candidate) => {
-            const ridingAttr = (candidate.data.riding || '')
+          {sortedProvincialCandidates.map((candidate) => {
+            const ridingAttr = (candidate.riding || '')
               .toLowerCase()
               .replace(/[—–]/g, '-')
               .replace(/\s+/g, '-');
-            const statusAttr = candidate.data.elected ? 'elected' : 'challenger';
+            const statusAttr = candidate.incumbent ? 'incumbent' : 'challenger';
 
             return (
               <div class="prov-candidate-item" data-riding={ridingAttr} data-status={statusAttr}>
                 <CandidateCard
-                  name={candidate.data.name}
-                  position={candidate.data.position}
-                  party={candidate.data.party}
-                  riding={candidate.data.riding}
-                  municipality={candidate.data.municipality}
-                  image={candidate.data.image}
+                  name={candidate.name}
+                  position={candidate.position}
+                  party={candidate.party}
+                  riding={candidate.riding}
+                  municipality={candidate.municipality}
+                  image={candidate.image}
                   slug={candidate.slug}
-                  elected={candidate.data.elected}
-                  role={candidate.data.role}
-                  votePercent={candidate.data.votePercent}
+                  incumbent={candidate.incumbent}
+                  role={candidate.role}
                 />
               </div>
             );
@@ -340,7 +274,7 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
     <div class="contribute-box">
       <h2>Community Voter Resource</h2>
       <p>
-        Autario Votes is an independent, non-partisan, open-source resource created to keep Simcoe County voters informed about their elected provincial and municipal representatives, riding boundaries, and election processes.
+        Autario Votes is an independent, non-partisan, open-source resource created to keep Simcoe County voters informed about upcoming provincial and municipal elections, candidate pools, voting rules, and electoral boundaries.
       </p>
       <div class="contribute-actions">
         <a href="https://github.com/JmaJeremy/autario-votes" class="btn" target="_blank" rel="noopener noreferrer">Contribute on GitHub</a>
@@ -473,41 +407,11 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
     margin-bottom: 4rem;
   }
 
-  .section-title-wrap {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .section-title-wrap h2 {
-    font-size: 1.75rem;
-    color: var(--text);
-    margin: 0;
-  }
-
-  .count-pill {
-    background: #f1f5f9;
-    color: #334155;
-    border: 1px solid #cbd5e1;
-    font-size: 0.8rem;
-    font-weight: 700;
-    padding: 0.2rem 0.6rem;
-    border-radius: 9999px;
-  }
-
-  .section-intro {
-    color: var(--text-light);
-    font-size: 1rem;
-    margin-bottom: 2rem;
-  }
-
   .filters-container {
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     flex-wrap: wrap;
   }
 
@@ -538,10 +442,20 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
   }
 
   .filter-btn:hover {
-    border-color: var(--primary);
+    border-color: var(--secondary);
   }
 
   .filter-btn.active {
+    background: var(--secondary);
+    color: white;
+    border-color: var(--secondary);
+  }
+
+  .provincial-only .filter-btn:hover {
+    border-color: var(--primary);
+  }
+
+  .provincial-only .filter-btn.active {
     background: var(--primary);
     color: white;
     border-color: var(--primary);
@@ -551,47 +465,6 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
-  }
-
-  /* Municipal Specific Styles */
-  .warden-spotlight-card {
-    background: linear-gradient(135deg, #f0fdfa 0%, #e6fffa 100%);
-    border: 1px solid #99f6e4;
-    border-left: 6px solid var(--secondary);
-    border-radius: 0.75rem;
-    padding: 2.5rem;
-    margin-bottom: 3rem;
-  }
-
-  .badge-county {
-    display: inline-block;
-    background: #ccfbf1;
-    color: #0f766e;
-    font-size: 0.8rem;
-    font-weight: 700;
-    padding: 0.2rem 0.6rem;
-    border-radius: 0.25rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.5rem;
-  }
-
-  .warden-card-header h2 {
-    font-size: 1.75rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .warden-card-header p {
-    color: var(--text-light);
-    font-size: 0.95rem;
-    line-height: 1.5;
-    margin-bottom: 1.5rem;
-  }
-
-  .warden-cards-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 1.5rem;
   }
 
   .role-tabs {
@@ -675,10 +548,6 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
     border: 2px solid var(--border);
   }
 
-  .avatar-mayor {
-    background: linear-gradient(135deg, var(--secondary) 0%, #14b8a6 100%);
-  }
-
   .avatar-challenger {
     background: linear-gradient(135deg, #64748b 0%, #94a3b8 100%);
   }
@@ -715,41 +584,26 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
     margin-bottom: 0.25rem;
   }
 
-  .role-elected {
-    background: #ccfbf1;
-    color: #0f766e;
-  }
-
-  .role-challenger {
-    background: #f1f5f9;
-    color: #475569;
-    border: 1px solid #cbd5e1;
-  }
-
-  .vote-tag {
-    font-size: 0.72rem;
+  /* Subtle dark orange incumbent flag */
+  .flag-incumbent {
+    background: #c2410c; /* dark orange */
+    color: white;
+    font-size: 0.7rem;
     font-weight: 700;
-    background: #e2e8f0;
-    color: #334155;
-    padding: 0.15rem 0.45rem;
-    border-radius: 0.25rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
   }
 
-  .votes-text {
-    font-size: 0.8rem;
-    color: var(--text-light);
-    font-weight: 600;
-    margin: 0;
-  }
-
-  .badge-role {
+  .office-tag {
     font-size: 0.75rem;
     font-weight: 700;
-    background: #ccfbf1;
-    color: #0f766e;
-    padding: 0.15rem 0.4rem;
+    background: #f1f5f9;
+    color: #475569;
+    padding: 0.15rem 0.45rem;
     border-radius: 0.25rem;
-    width: fit-content;
     text-transform: uppercase;
   }
 
@@ -795,10 +649,11 @@ const allTrustees = SCHOOL_BOARDS.flatMap(b =>
     margin: 0;
   }
 
-  .contact-text {
+  .cand-note-text {
     font-size: 0.8rem;
     color: var(--text-light);
     margin: 0;
+    line-height: 1.3;
   }
 
   .link-profile {

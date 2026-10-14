@@ -8,7 +8,7 @@ role: MPP for York—Simcoe
 website: https://susanlaheympp.ca
 email: susan.lahey@pc.ola.org
 phone: 905-895-1555
-incumbent: false
+incumbent: true
 elected: true
 election: York—Simcoe Provincial By-Election (September 3, 2026)
 votes: 11491

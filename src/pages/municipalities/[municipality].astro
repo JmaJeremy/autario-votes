@@ -5,6 +5,7 @@ import Layout from '../../layouts/Layout.astro';
 import CandidateCard from '../../components/CandidateCard.astro';
 import { MUNICIPALITY_RIDING_MAPPING, RIDINGS } from '../../data/ridings';
 import { MUNICIPALITIES_DATA, type MunicipalityDetail } from '../../data/municipal';
+import { sortByLastName } from '../../utils/sorting';
 
 export async function getStaticPaths() {
   const candidates = await getCollection('candidates');
@@ -32,11 +33,10 @@ export async function getStaticPaths() {
         munDetail,
         mapData,
         riding,
-        candidates: matchedCandidates.sort((a, b) => {
-          if (a.data.elected && !b.data.elected) return -1;
-          if (!a.data.elected && b.data.elected) return 1;
-          return a.data.name.localeCompare(b.data.name);
-        })
+        candidates: sortByLastName(matchedCandidates.map(c => ({
+          ...c,
+          name: c.data.name
+        })))
       }
     };
   });
@@ -99,11 +99,14 @@ const { munDetail, mapData, riding, candidates } = Astro.props;
     <!-- ========================================== -->
     <!-- 1. MUNICIPAL GOVERNMENT SECTION           -->
     <!-- ========================================== -->
+    <!-- ========================================== -->
+    <!-- 1. UPCOMING 2026 MUNICIPAL ELECTION RACE   -->
+    <!-- ========================================== -->
     <section class="section-card mun-highlight-card">
       <div class="section-title-bar">
         <div>
-          <span class="badge-accent">Municipal Government</span>
-          <h2>Council Leadership & Wards</h2>
+          <span class="badge-accent">Upcoming 2026 Election</span>
+          <h2>2026 Head of Council (Mayor) Race</h2>
         </div>
         <div class="method-pill">
           <span>Voting Method:</span>
@@ -111,55 +114,25 @@ const { munDetail, mapData, riding, candidates } = Astro.props;
         </div>
       </div>
 
-      <!-- Mayor & Deputy Mayor Feature -->
-      <div class="mayors-feature-grid">
-        <div class="mayor-card">
-          <div class="avatar-box avatar-mayor">
-            <span>{munDetail.mayor.name.charAt(0)}</span>
-          </div>
-          <div class="mayor-info">
-            <span class="role-chip">Head of Council</span>
-            <h3>{munDetail.mayor.name}</h3>
-            <p class="role-desc">{munDetail.mayor.title}</p>
-            {munDetail.mayor.phone && <p class="contact-p">📞 {munDetail.mayor.phone}</p>}
-            {munDetail.mayor.email && <p class="contact-p">✉️ {munDetail.mayor.email}</p>}
-          </div>
-        </div>
-
-        {munDetail.deputyMayor && (
-          <div class="mayor-card">
-            <div class="avatar-box avatar-deputy">
-              <span>{munDetail.deputyMayor.name.charAt(0)}</span>
-            </div>
-            <div class="mayor-info">
-              <span class="role-chip chip-deputy">Deputy Head of Council</span>
-              <h3>{munDetail.deputyMayor.name}</h3>
-              <p class="role-desc">{munDetail.deputyMayor.title}</p>
-              <p class="contact-p">Represents {munDetail.name} at County of Simcoe Council</p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <!-- Mayoral Election Candidates & Results -->
+      <!-- Mayoral Election Candidates Pool -->
       {munDetail.candidates && munDetail.candidates.length > 0 && (
         <div class="election-race-block">
           <div class="race-header">
             <div>
-              <h3>Head of Council (Mayor) Election Candidates & Results</h3>
-              <p class="sub-text">Certified votes and candidate roster under the <em>Municipal Elections Act</em>:</p>
+              <h3>Candidates Pool (Alphabetical by Last Name)</h3>
+              <p class="sub-text">Candidates contesting Head of Council (Mayor) for {munDetail.name}:</p>
             </div>
-            <span class="race-badge">Certified Municipal Race</span>
+            <span class="race-badge">{munDetail.candidates.length} Candidates</span>
           </div>
 
           <div class="race-candidates-grid">
-            {munDetail.candidates.map(cand => (
-              <div class={`cand-race-card ${cand.elected ? 'card-winner' : ''}`}>
+            {sortByLastName(munDetail.candidates).map(cand => (
+              <div class="cand-race-card">
                 <div class="cand-race-top">
-                  <span class={`status-pill ${cand.elected ? 'pill-elected' : 'pill-candidate'}`}>
-                    {cand.elected ? '✓ Elected (In Office)' : 'Candidate / Challenger'}
-                  </span>
-                  <span class="vote-share-badge">{cand.votePercent}</span>
+                  {cand.incumbent && (
+                    <span class="flag-incumbent">Incumbent</span>
+                  )}
+                  <span class="office-pill">{cand.office} Candidate</span>
                 </div>
                 <h4>
                   {cand.slug ? (
@@ -169,9 +142,6 @@ const { munDetail, mapData, riding, candidates } = Astro.props;
                   )}
                 </h4>
                 {cand.note && <p class="cand-sub-note">{cand.note}</p>}
-                {cand.votes && (
-                  <p class="cand-votes-count"><strong>{cand.votes.toLocaleString()}</strong> certified votes cast</p>
-                )}
                 {cand.slug && (
                   <a href={`/candidate/${cand.slug}`} class="cand-profile-link">View Candidate Profile →</a>
                 )}
@@ -180,6 +150,42 @@ const { munDetail, mapData, riding, candidates } = Astro.props;
           </div>
         </div>
       )}
+
+      <!-- Current Council Reference (2022–2026 Expiring Term) -->
+      <div class="current-council-ref">
+        <h3 class="ref-title">Current Council Reference (2022–2026 Term)</h3>
+        <p class="ref-sub">Sitting local officials serving until the new council term begins on November 15, 2026:</p>
+
+        <!-- Mayor & Deputy Mayor Feature -->
+        <div class="mayors-feature-grid">
+          <div class="mayor-card">
+            <div class="avatar-box avatar-mayor">
+              <span>{munDetail.mayor.name.charAt(0)}</span>
+            </div>
+            <div class="mayor-info">
+              <span class="role-chip">Sitting Head of Council</span>
+              <h3>{munDetail.mayor.name}</h3>
+              <p class="role-desc">{munDetail.mayor.title}</p>
+              {munDetail.mayor.phone && <p class="contact-p">📞 {munDetail.mayor.phone}</p>}
+              {munDetail.mayor.email && <p class="contact-p">✉️ {munDetail.mayor.email}</p>}
+            </div>
+          </div>
+
+          {munDetail.deputyMayor && (
+            <div class="mayor-card">
+              <div class="avatar-box avatar-deputy">
+                <span>{munDetail.deputyMayor.name.charAt(0)}</span>
+              </div>
+              <div class="mayor-info">
+                <span class="role-chip chip-deputy">Sitting Deputy Head of Council</span>
+                <h3>{munDetail.deputyMayor.name}</h3>
+                <p class="role-desc">{munDetail.deputyMayor.title}</p>
+                <p class="contact-p">Represents {munDetail.name} at County of Simcoe Council</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
 
       <!-- Ward Councillors Grid -->
       <div class="councillors-block">
@@ -585,11 +591,12 @@ const { munDetail, mapData, riding, candidates } = Astro.props;
     flex-direction: column;
     gap: 0.5rem;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: transform 0.2s, box-shadow 0.2s;
   }
 
-  .cand-race-card.card-winner {
-    border-top: 4px solid var(--secondary);
-    background: #fdfefe;
+  .cand-race-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   }
 
   .cand-race-top {
@@ -599,28 +606,45 @@ const { munDetail, mapData, riding, candidates } = Astro.props;
     gap: 0.5rem;
   }
 
-  .status-pill {
+  .flag-incumbent {
+    background: #c2410c; /* subtle dark orange */
+    color: white;
     font-size: 0.7rem;
     font-weight: 700;
     padding: 0.15rem 0.5rem;
-    border-radius: 0.25rem;
+    border-radius: 9999px;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
   }
 
-  .pill-elected {
-    background: #ccfbf1;
-    color: #0f766e;
-  }
-
-  .pill-candidate {
+  .office-pill {
+    font-size: 0.72rem;
+    font-weight: 700;
     background: #f1f5f9;
     color: #475569;
+    padding: 0.15rem 0.45rem;
+    border-radius: 0.25rem;
+    text-transform: uppercase;
+    margin-left: auto;
   }
 
-  .vote-share-badge {
+  .current-council-ref {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px dashed var(--border);
+  }
+
+  .ref-title {
+    font-size: 1.2rem;
+    color: var(--text);
+    margin: 0 0 0.25rem 0;
+  }
+
+  .ref-sub {
     font-size: 0.9rem;
-    font-weight: 800;
-    color: var(--primary);
+    color: var(--text-light);
+    margin: 0 0 1.25rem 0;
   }
 
   .cand-race-card h4 {
