@@ -2,103 +2,726 @@
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import CandidateCard from '../../components/CandidateCard.astro';
+import { RIDINGS } from '../../data/ridings';
+import { COUNTY_COUNCIL, MUNICIPALITIES_DATA, SCHOOL_BOARDS } from '../../data/municipal';
 
-const candidates = await getCollection('candidates');
-const sortedCandidates = candidates.sort((a, b) => {
-  const lastNameA = a.data.name.split(' ').pop() || '';
-  const lastNameB = b.data.name.split(' ').pop() || '';
-  return lastNameA.localeCompare(lastNameB);
-});
+const allContentCandidates = await getCollection('candidates');
+
+// Separate content candidates by level
+const provincialCandidates = allContentCandidates.filter(c => c.data.level !== 'municipal');
+const provincialMPPs = provincialCandidates.filter(c => c.data.elected);
+
+// Municipal Leaders (Mayors, Deputy Mayors, Councillors, Trustees)
+const municipalMayors = MUNICIPALITIES_DATA.map(m => ({
+  name: m.mayor.name,
+  title: m.mayor.title,
+  municipality: m.name,
+  slug: m.mayor.slug || m.slug,
+  email: m.mayor.email,
+  phone: m.mayor.phone,
+  type: 'Mayor',
+  sub: m.type
+}));
+
+// Build list of all councillors
+const municipalCouncillors = MUNICIPALITIES_DATA.flatMap(m => 
+  m.councillors.map(c => ({
+    name: c.name,
+    title: c.title,
+    municipality: m.name,
+    munSlug: m.slug,
+    ward: c.ward || 'At-Large',
+    type: 'Councillor'
+  }))
+);
+
+// Build list of all trustees
+const allTrustees = SCHOOL_BOARDS.flatMap(b =>
+  b.trustees.map(t => ({
+    name: t.trustee,
+    title: `Trustee (${b.name})`,
+    boardName: b.name,
+    boardType: b.type,
+    area: t.area,
+    type: 'Trustee'
+  }))
+);
 ---
 
-<Layout title="Candidates - Autario Votes - Simcoe County">
+<Layout 
+  title="Candidates & Representatives Directory - Autario Votes"
+  description="Explore sitting MPPs, provincial candidates, mayors, wardens, municipal councillors, and school board trustees across Simcoe County."
+>
   <div class="container page-content">
-    <h1>Candidates</h1>
-    <p class="intro">
-      Learn about the candidates running for office in your area. Click on any candidate 
-      to read their full biography, platform, and contact information.
-    </p>
+    <!-- ========================================== -->
+    <!-- 1. MUNICIPAL LEADERSHIP VIEW               -->
+    <!-- ========================================== -->
+    <div class="municipal-only">
+      <div class="header-section">
+        <span class="eyebrow eyebrow-mun">Simcoe County Local Leadership</span>
+        <h1>Mayors, Wardens, Councillors & Trustees</h1>
+        <p class="intro">
+          Meet the elected local leadership serving Simcoe County's 18 municipalities, County of Simcoe Council, and the 4 regional school boards. Municipal general elections take place every 4 years (next on <strong>October 26, 2026</strong>).
+        </p>
+      </div>
 
-    <div class="candidates-grid">
-      {sortedCandidates.map((candidate) => (
-        <CandidateCard
-          name={candidate.data.name}
-          position={candidate.data.position}
-          party={candidate.data.party}
-          municipality={candidate.data.municipality}
-          image={candidate.data.image}
-          slug={candidate.slug}
-        />
-      ))}
+      <!-- County Council Warden Spotlight -->
+      <section class="section-block">
+        <div class="warden-spotlight-card">
+          <div class="warden-card-header">
+            <span class="badge-county">County of Simcoe Council</span>
+            <h2>Warden & Deputy Warden (2023–2026 Term)</h2>
+            <p>
+              County of Simcoe Council is composed of 32 members: the Mayors and Deputy Mayors from the 16 member municipalities (excluding the separated cities of Barrie and Orillia).
+            </p>
+          </div>
+          <div class="warden-cards-row">
+            <div class="official-card">
+              <div class="card-avatar">BC</div>
+              <div class="card-meta">
+                <span class="role-pill">Head of County Council</span>
+                <h3><a href={`/candidate/${COUNTY_COUNCIL.warden.slug}`}>{COUNTY_COUNCIL.warden.name}</a></h3>
+                <p class="title-text">{COUNTY_COUNCIL.warden.title}</p>
+                <p class="sub-text">Mayor of {COUNTY_COUNCIL.warden.mayorOf} • {COUNTY_COUNCIL.warden.term}</p>
+                <p class="contact-text">📞 {COUNTY_COUNCIL.warden.phone} • ✉️ {COUNTY_COUNCIL.warden.email}</p>
+                <a href={`/candidate/${COUNTY_COUNCIL.warden.slug}`} class="link-profile">View Warden Profile →</a>
+              </div>
+            </div>
+
+            <div class="official-card">
+              <div class="card-avatar">JC</div>
+              <div class="card-meta">
+                <span class="role-pill">Deputy Head of Council</span>
+                <h3><a href={`/candidate/${COUNTY_COUNCIL.deputyWarden.slug}`}>{COUNTY_COUNCIL.deputyWarden.name}</a></h3>
+                <p class="title-text">{COUNTY_COUNCIL.deputyWarden.title}</p>
+                <p class="sub-info">Mayor of {COUNTY_COUNCIL.deputyWarden.mayorOf} • {COUNTY_COUNCIL.deputyWarden.term}</p>
+                <p class="contact-text">📞 {COUNTY_COUNCIL.deputyWarden.phone} • ✉️ {COUNTY_COUNCIL.deputyWarden.email}</p>
+                <a href={`/candidate/${COUNTY_COUNCIL.deputyWarden.slug}`} class="link-profile">View Deputy Warden Profile →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Category Tabs for Municipal Directory -->
+      <section class="section-block">
+        <div class="section-title-wrap">
+          <h2>Municipal Directory by Role</h2>
+        </div>
+
+        <div class="role-tabs" id="mun-role-tabs">
+          <button class="tab-btn active" data-tab="mayors">👑 Mayors ({municipalMayors.length})</button>
+          <button class="tab-btn" data-tab="councillors">👥 Municipal Councillors ({municipalCouncillors.length})</button>
+          <button class="tab-btn" data-tab="trustees">🎒 School Board Trustees ({allTrustees.length})</button>
+        </div>
+
+        <!-- 1. MAYORS TAB CONTENT -->
+        <div class="tab-content active" id="tab-mayors">
+          <div class="officials-grid">
+            {municipalMayors.map(m => {
+              const matchedCandidate = allContentCandidates.find(c => c.slug === m.slug);
+              const imgUrl = matchedCandidate?.data?.image;
+              return (
+                <div class="official-card">
+                  {imgUrl ? (
+                    <img src={imgUrl} alt={m.name} class="card-avatar-img" />
+                  ) : (
+                    <div class="card-avatar avatar-mayor">{m.name.charAt(0)}</div>
+                  )}
+                  <div class="card-meta">
+                    <span class="badge-role">Head of Council</span>
+                    <h3><a href={`/candidate/${m.slug}`}>{m.name}</a></h3>
+                    <p class="title-text">{m.title}</p>
+                    <p class="sub-text">📍 {m.municipality}</p>
+                    {m.phone && <p class="contact-text">📞 {m.phone}</p>}
+                    {m.email && <p class="contact-text">✉️ {m.email}</p>}
+                    <a href={`/candidate/${m.slug}`} class="link-profile">View Profile & Council →</a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <!-- 2. COUNCILLORS TAB CONTENT -->
+        <div class="tab-content" id="tab-councillors">
+          <div class="officials-grid">
+            {municipalCouncillors.map(c => (
+              <div class="official-card">
+                <div class="card-avatar avatar-councillor">{c.name.charAt(0)}</div>
+                <div class="card-meta">
+                  <span class="badge-ward">{c.ward}</span>
+                  <h3>{c.name}</h3>
+                  <p class="title-text">{c.title}</p>
+                  <p class="sub-text">📍 <a href={`/municipalities/${c.munSlug}`}>{c.municipality}</a></p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- 3. SCHOOL BOARD TRUSTEES TAB CONTENT -->
+        <div class="tab-content" id="tab-trustees">
+          <div class="officials-grid">
+            {allTrustees.map(t => {
+              const trusteeSlug = t.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+              const matchedTrustee = allContentCandidates.find(c => c.slug === trusteeSlug);
+              return (
+                <div class="official-card">
+                  {matchedTrustee?.data?.image ? (
+                    <img src={matchedTrustee.data.image} alt={t.name} class="card-avatar-img" />
+                  ) : (
+                    <div class="card-avatar avatar-trustee">🎒</div>
+                  )}
+                  <div class="card-meta">
+                    <span class="badge-board">{t.boardType}</span>
+                    <h3>
+                      {matchedTrustee ? (
+                        <a href={`/candidate/${trusteeSlug}`}>{t.name}</a>
+                      ) : (
+                        t.name
+                      )}
+                    </h3>
+                    <p class="title-text">{t.boardName}</p>
+                    <p class="sub-text">📍 <strong>Zone:</strong> {t.area}</p>
+                    {matchedTrustee && (
+                      <a href={`/candidate/${trusteeSlug}`} class="link-profile">View Trustee Profile →</a>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
     </div>
 
+    <!-- ========================================== -->
+    <!-- 2. PROVINCIAL CANDIDATES VIEW              -->
+    <!-- ========================================== -->
+    <div class="provincial-only">
+      <div class="header-section">
+        <span class="eyebrow">Provincial Representatives</span>
+        <h1>Simcoe County MPPs & Candidates</h1>
+        <p class="intro">
+          Browse the 5 current sitting Members of Provincial Parliament (MPPs) representing Simcoe County in Queen's Park, 
+          as well as candidates who contested the <strong>44th Ontario General Election (February 27, 2025)</strong> and the 
+          <strong>York—Simcoe By-Election (September 3, 2026)</strong>.
+        </p>
+      </div>
+
+      <!-- Sitting MPPs Section -->
+      <section class="section-block">
+        <div class="section-title-wrap">
+          <h2>Sitting Members of Provincial Parliament (MPPs)</h2>
+          <span class="count-pill">5 Elected MPPs</span>
+        </div>
+        <p class="section-intro">
+          All 5 provincial electoral districts in Simcoe County are currently held by the Progressive Conservative Party of Ontario.
+        </p>
+
+        <div class="candidates-grid">
+          {provincialMPPs.map((candidate) => (
+            <CandidateCard
+              name={candidate.data.name}
+              position={candidate.data.position}
+              party={candidate.data.party}
+              riding={candidate.data.riding}
+              municipality={candidate.data.municipality}
+              image={candidate.data.image}
+              slug={candidate.slug}
+              elected={candidate.data.elected}
+              role={candidate.data.role}
+              votePercent={candidate.data.votePercent}
+            />
+          ))}
+        </div>
+      </section>
+
+      <!-- All Provincial Candidates by Riding Filter -->
+      <section class="section-block">
+        <div class="section-title-wrap">
+          <h2>All Provincial Candidates by Riding</h2>
+        </div>
+
+        <div class="filters-container">
+          <span class="filter-label">Filter by Riding:</span>
+          <div class="filter-buttons" id="prov-riding-filters">
+            <button class="filter-btn active" data-filter="all">All Ridings</button>
+            <button class="filter-btn" data-filter="barrie-innisfil">Barrie—Innisfil</button>
+            <button class="filter-btn" data-filter="barrie-springwater-oro-medonte">Barrie—Springwater—Oro-Medonte</button>
+            <button class="filter-btn" data-filter="simcoe-grey">Simcoe—Grey</button>
+            <button class="filter-btn" data-filter="simcoe-north">Simcoe North</button>
+            <button class="filter-btn" data-filter="york-simcoe">York—Simcoe</button>
+          </div>
+        </div>
+
+        <div class="candidates-grid" id="prov-candidates-roster">
+          {provincialCandidates.map((candidate) => {
+            const ridingAttr = (candidate.data.riding || '')
+              .toLowerCase()
+              .replace(/[—–]/g, '-')
+              .replace(/\s+/g, '-');
+
+            return (
+              <div class="prov-candidate-item" data-riding={ridingAttr}>
+                <CandidateCard
+                  name={candidate.data.name}
+                  position={candidate.data.position}
+                  party={candidate.data.party}
+                  riding={candidate.data.riding}
+                  municipality={candidate.data.municipality}
+                  image={candidate.data.image}
+                  slug={candidate.slug}
+                  elected={candidate.data.elected}
+                  role={candidate.data.role}
+                  votePercent={candidate.data.votePercent}
+                />
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    </div>
+
+    <!-- Community Callout -->
     <div class="contribute-box">
-      <h2>Is a candidate missing?</h2>
+      <h2>Community Voter Resource</h2>
       <p>
-        This site is community-maintained. If you'd like to add a candidate or update 
-        information, please submit a pull request on GitHub.
+        Autario Votes is an independent, non-partisan, open-source resource created to keep Simcoe County voters informed about their elected provincial and municipal representatives, riding boundaries, and election processes.
       </p>
-      <a href="https://github.com/JmaJeremy/autario-votes" class="btn">Contribute on GitHub</a>
+      <div class="contribute-actions">
+        <a href="https://github.com/JmaJeremy/autario-votes" class="btn" target="_blank" rel="noopener noreferrer">Contribute on GitHub</a>
+        <a href="/voting-process" class="btn btn-secondary">Voting Information</a>
+      </div>
     </div>
   </div>
-
-  <style>
-    .page-content {
-      padding: 3rem 0;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      color: var(--primary);
-    }
-
-    .intro {
-      font-size: 1.1rem;
-      color: var(--text-light);
-      margin-bottom: 3rem;
-      max-width: 800px;
-    }
-
-    .candidates-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 2rem;
-      margin-bottom: 3rem;
-    }
-
-    .contribute-box {
-      background: var(--bg-alt);
-      padding: 2rem;
-      border-radius: 0.5rem;
-      border: 1px solid var(--border);
-      text-align: center;
-      margin-top: 4rem;
-    }
-
-    .contribute-box h2 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .contribute-box p {
-      margin-bottom: 1.5rem;
-      color: var(--text-light);
-    }
-
-    .btn {
-      display: inline-block;
-      background: var(--primary);
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.375rem;
-      font-weight: 600;
-      transition: background 0.2s;
-    }
-
-    .btn:hover {
-      background: var(--primary-dark);
-      text-decoration: none;
-    }
-  </style>
 </Layout>
+
+<script is:inline>
+  // Provincial Riding filtering
+  const provFilterButtons = document.querySelectorAll('#prov-riding-filters .filter-btn');
+  const provCandidateItems = document.querySelectorAll('#prov-candidates-roster .prov-candidate-item');
+
+  provFilterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      provFilterButtons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+
+      const filterValue = button.getAttribute('data-filter');
+
+      provCandidateItems.forEach(item => {
+        const itemRiding = item.getAttribute('data-riding') || '';
+        if (filterValue === 'all' || itemRiding.includes(filterValue)) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // Municipal Role tabs switching
+  const tabButtons = document.querySelectorAll('#mun-role-tabs .tab-btn');
+  const tabContents = {
+    mayors: document.getElementById('tab-mayors'),
+    councillors: document.getElementById('tab-councillors'),
+    trustees: document.getElementById('tab-trustees')
+  };
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const target = btn.getAttribute('data-tab');
+      Object.keys(tabContents).forEach(key => {
+        if (tabContents[key]) {
+          tabContents[key].classList.toggle('active', key === target);
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .header-section {
+    margin-bottom: 3rem;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    color: var(--primary);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+  }
+
+  .eyebrow-mun {
+    color: var(--secondary);
+  }
+
+  h1 {
+    font-size: 2.75rem;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+
+  .intro {
+    font-size: 1.15rem;
+    color: var(--text-light);
+    max-width: 850px;
+    line-height: 1.6;
+  }
+
+  .section-block {
+    margin-bottom: 4rem;
+  }
+
+  .section-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .section-title-wrap h2 {
+    font-size: 1.75rem;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .count-pill {
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+  }
+
+  .section-intro {
+    color: var(--text-light);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .filters-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .filter-btn {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-btn:hover {
+    border-color: var(--primary);
+  }
+
+  .filter-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+
+  .candidates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+
+  /* Municipal Specific Styles */
+  .warden-spotlight-card {
+    background: linear-gradient(135deg, #f0fdfa 0%, #e6fffa 100%);
+    border: 1px solid #99f6e4;
+    border-left: 6px solid var(--secondary);
+    border-radius: 0.75rem;
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .badge-county {
+    display: inline-block;
+    background: #ccfbf1;
+    color: #0f766e;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+  }
+
+  .warden-card-header h2 {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .warden-card-header p {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+
+  .warden-cards-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .role-tabs {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    padding: 0.75rem 1.25rem;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tab-btn:hover {
+    border-color: var(--secondary);
+  }
+
+  .tab-btn.active {
+    background: var(--secondary);
+    color: white;
+    border-color: var(--secondary);
+  }
+
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  .officials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .official-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1.25rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .official-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  .card-avatar {
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    color: white;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .card-avatar-img {
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid var(--border);
+  }
+
+  .avatar-mayor {
+    background: linear-gradient(135deg, var(--secondary) 0%, #14b8a6 100%);
+  }
+
+  .avatar-councillor {
+    background: linear-gradient(135deg, #475569 0%, #64748b 100%);
+  }
+
+  .avatar-trustee {
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+    font-size: 1.4rem;
+  }
+
+  .card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    flex-grow: 1;
+  }
+
+  .badge-role {
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: #ccfbf1;
+    color: #0f766e;
+    padding: 0.15rem 0.4rem;
+    border-radius: 0.25rem;
+    width: fit-content;
+    text-transform: uppercase;
+  }
+
+  .badge-ward {
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: #f1f5f9;
+    color: #475569;
+    padding: 0.15rem 0.4rem;
+    border-radius: 0.25rem;
+    width: fit-content;
+  }
+
+  .badge-board {
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: #f3e8ff;
+    color: #7e22ce;
+    padding: 0.15rem 0.4rem;
+    border-radius: 0.25rem;
+    width: fit-content;
+  }
+
+  .card-meta h3 {
+    font-size: 1.15rem;
+    margin: 0.25rem 0 0 0;
+  }
+
+  .card-meta h3 a {
+    color: var(--text);
+  }
+
+  .title-text {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--secondary-dark);
+    margin: 0;
+  }
+
+  .sub-text {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin: 0;
+  }
+
+  .contact-text {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin: 0;
+  }
+
+  .link-profile {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--secondary);
+    margin-top: 0.5rem;
+    display: inline-block;
+  }
+
+  .contribute-box {
+    background: var(--bg-alt);
+    padding: 3rem 2rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    text-align: center;
+    margin-top: 4rem;
+  }
+
+  .contribute-box h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .contribute-box p {
+    margin-bottom: 2rem;
+    color: var(--text-light);
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+
+  .contribute-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    transition: background 0.2s;
+    text-decoration: none;
+  }
+
+  .btn:hover {
+    background: var(--primary-dark);
+    text-decoration: none;
+  }
+
+  .btn-secondary {
+    background: white;
+    color: var(--primary);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    background: #f8fafc;
+  }
+</style>

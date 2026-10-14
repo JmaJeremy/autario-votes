@@ -1,171 +1,456 @@
 ---
-import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import CountyMap from '../../components/CountyMap.astro';
+import { MUNICIPALITY_RIDING_MAPPING, RIDINGS } from '../../data/ridings';
+import { MUNICIPALITIES_DATA, COUNTY_COUNCIL } from '../../data/municipal';
 
-const candidates = await getCollection('candidates');
-
-const municipalityMap = new Map();
-
-candidates.forEach((candidate) => {
-  const municipality = candidate.data.municipality;
-  if (!municipalityMap.has(municipality)) {
-    municipalityMap.set(municipality, 0);
-  }
-  municipalityMap.set(municipality, municipalityMap.get(municipality) + 1);
+const municipalitiesList = MUNICIPALITIES_DATA.map(m => {
+  const mapData = MUNICIPALITY_RIDING_MAPPING[m.slug] || { ridingSlug: 'simcoe-grey', ridingName: 'Simcoe—Grey' };
+  const riding = RIDINGS.find(r => r.slug === mapData.ridingSlug);
+  return {
+    ...m,
+    ridingName: mapData.ridingName,
+    ridingSlug: mapData.ridingSlug,
+    mpp: riding ? riding.mpp : 'Andrea Khanjin / Doug Downey',
+    splitNote: mapData.note
+  };
 });
-
-const municipalities = Array.from(municipalityMap.entries())
-  .map(([name, count]) => ({
-    name,
-    count,
-    slug: name.toLowerCase().replace(/\s+/g, '-')
-  }))
-  .sort((a, b) => a.name.localeCompare(b.name));
 ---
 
-<Layout title="Municipalities - Autario Votes - Simcoe County">
+<Layout 
+  title="Simcoe County Municipalities Directory - Autario Votes"
+  description="Explore the local councils, mayors, councillors, wardens, school board trustees, and provincial ridings for all 18 Simcoe County municipalities."
+>
   <div class="container page-content">
-    <h1>Simcoe County Municipalities</h1>
-    <p class="intro">
-      Simcoe County is located in Southern Ontario and consists of 18 municipalities. 
-      Select your municipality below to view candidates running for office in your area.
-    </p>
+    <div class="header-section">
+      <span class="eyebrow">Simcoe County Local Government</span>
+      <h1>Simcoe County Municipalities Directory</h1>
+      <p class="intro">
+        Simcoe County consists of 16 towns and townships plus 2 separated cities (Barrie and Orillia). 
+        Explore local municipal leadership—including Mayors, Councillors, County Council representatives, and School Board Trustees—as well as their corresponding provincial ridings.
+      </p>
+    </div>
 
-    <div class="content-wrapper">
-      <div class="map-section">
-        <h2>Simcoe County Map</h2>
-        <div class="map-container">
-          <CountyMap />
-          <!-- <p class="map-note">Interactive map - click on any municipality to view candidates</p> -->
+    <!-- County Council Leadership Banner (Municipal View) -->
+    <div class="municipal-only county-header-banner">
+      <div class="ch-left">
+        <span class="badge-county">Regional County Governance</span>
+        <h2>County of Simcoe Council</h2>
+        <p>
+          Governed by 32 members: the Mayors and Deputy Mayors from the 16 member municipalities (excluding Barrie & Orillia).
+        </p>
+        <div class="wardens-row">
+          <div class="warden-badge">
+            <strong>Warden:</strong> {COUNTY_COUNCIL.warden.name} (Mayor of {COUNTY_COUNCIL.warden.mayorOf})
+          </div>
+          <div class="warden-badge">
+            <strong>Deputy Warden:</strong> {COUNTY_COUNCIL.deputyWarden.name} (Mayor of {COUNTY_COUNCIL.deputyWarden.mayorOf})
+          </div>
+        </div>
+      </div>
+      <div class="ch-right">
+        <a href="#municipal-table" class="btn btn-secondary">Browse All 18 Councils ↓</a>
+      </div>
+    </div>
+
+    <div class="content-wrapper" id="municipal-table">
+      <div class="list-section">
+        <!-- Municipal View Heading -->
+        <div class="municipal-only table-headline">
+          <h2>Local Municipal Councils & Mayors</h2>
+          <p class="sub">Head of council, councillors, and school board trustee allocations for each municipality.</p>
+        </div>
+
+        <!-- Provincial View Heading -->
+        <div class="provincial-only table-headline">
+          <h2>Municipalities to Provincial Ridings Mapping</h2>
+          <p class="sub">Find which provincial riding and MPP represents your local town or city.</p>
+        </div>
+
+        <div class="municipalities-table-wrap">
+          <table class="mun-table">
+            <thead>
+              <tr>
+                <th>Municipality</th>
+                <!-- Municipal View Columns -->
+                <th class="municipal-only">Mayor (Head of Council)</th>
+                <th class="municipal-only">Council Size</th>
+                <th class="municipal-only">Voting Method</th>
+                <!-- Provincial View Columns -->
+                <th class="provincial-only">Provincial Riding</th>
+                <th class="provincial-only">Current MPP</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {municipalitiesList.map((mun) => (
+                <tr>
+                  <td>
+                    <a href={`/municipalities/${mun.slug}`} class="mun-link">
+                      <strong>{mun.name}</strong>
+                    </a>
+                    <span class="mun-type">{mun.type} {mun.separated ? '• Separated City' : '• County Member'}</span>
+                    {mun.splitNote && <p class="mun-note-text provincial-only">ℹ️ {mun.splitNote}</p>}
+                  </td>
+
+                  <!-- Municipal Mode Data -->
+                  <td class="municipal-only">
+                    <strong class="mayor-name">{mun.mayor.name}</strong>
+                    {mun.deputyMayor && <span class="deputy-text">Deputy: {mun.deputyMayor.name}</span>}
+                  </td>
+                  <td class="municipal-only">
+                    <span class="council-badge">{mun.councillors.length + (mun.deputyMayor ? 2 : 1)} Seats</span>
+                  </td>
+                  <td class="municipal-only">
+                    <span class="method-tag">{mun.votingMethod.startsWith('Hybrid') ? '🔄 Hybrid (Net/Paper)' : (mun.votingMethod.includes('Internet') ? '🌐 Internet / Phone' : '🗳️ Paper Ballots')}</span>
+                  </td>
+
+                  <!-- Provincial Mode Data -->
+                  <td class="provincial-only">
+                    <a href={`/ridings/${mun.ridingSlug}`} class="riding-link">
+                      {mun.ridingName}
+                    </a>
+                  </td>
+                  <td class="provincial-only">
+                    <span class="mpp-name">{mun.mpp}</span>
+                    <span class="mpp-party">(PC)</span>
+                  </td>
+
+                  <td>
+                    <a href={`/municipalities/${mun.slug}`} class="btn-sm">
+                      Full Details →
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <div class="list-section">
-        <h2>All Municipalities</h2>
-        <div class="municipalities-list">
-          {municipalities.map((municipality) => (
-            <a href={`/municipalities/${municipality.slug}`} class="municipality-card">
-              <div class="municipality-info">
-                <h3>{municipality.name}</h3>
-                <p class="candidate-count">
-                  {municipality.count} {municipality.count === 1 ? 'candidate' : 'candidates'}
-                </p>
-              </div>
-              <span class="arrow">→</span>
-            </a>
-          ))}
+      <div class="map-sidebar">
+        <div class="card-sidebar">
+          <h3>Simcoe County Regional Map</h3>
+          <div class="map-container">
+            <CountyMap />
+          </div>
+          
+          <div class="provincial-only card-note">
+            <h4>Split Ridings Guidance</h4>
+            <p>
+              Two municipalities span across multiple provincial ridings:
+            </p>
+            <ul>
+              <li><strong>Barrie:</strong> South of Tiffin St is in <em>Barrie—Innisfil</em>; north is in <em>Barrie—Springwater—Oro-Medonte</em>.</li>
+              <li><strong>Oro-Medonte:</strong> West/south is in <em>Barrie—Springwater—Oro-Medonte</em>; north/east is in <em>Simcoe North</em>.</li>
+            </ul>
+          </div>
+
+          <div class="municipal-only card-note">
+            <h4>Next Municipal Election</h4>
+            <p>
+              Voting Day is <strong>Monday, October 26, 2026</strong>. 
+              Voters elect Mayors, Deputy Mayors, Ward Councillors, and School Board Trustees for the 2026–2030 term.
+            </p>
+            <a href="/voting-process" class="sidebar-link">Municipal Voting Rules →</a>
+          </div>
         </div>
       </div>
     </div>
   </div>
-
-  <style>
-    .page-content {
-      padding: 3rem 0;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      color: var(--primary);
-    }
-
-    .intro {
-      font-size: 1.1rem;
-      color: var(--text-light);
-      margin-bottom: 3rem;
-      max-width: 800px;
-    }
-
-    .content-wrapper {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      margin-bottom: 3rem;
-    }
-
-    @media (max-width: 968px) {
-      .content-wrapper {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .map-section h2,
-    .list-section h2 {
-      font-size: 1.5rem;
-      margin-bottom: 1.5rem;
-      color: var(--text);
-    }
-
-    .map-container {
-      background: var(--bg-alt);
-      padding: 2rem;
-      border-radius: 0.5rem;
-      border: 1px solid var(--border);
-    }
-
-    .county-map {
-      width: 100%;
-      height: auto;
-      max-width: 500px;
-      margin: 0 auto;
-      display: block;
-    }
-
-    .map-note {
-      text-align: center;
-      color: var(--text-light);
-      font-size: 0.9rem;
-      margin-top: 1rem;
-      font-style: italic;
-    }
-
-    .municipalities-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .municipality-card {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.25rem 1.5rem;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 0.5rem;
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.2s;
-    }
-
-    .municipality-card:hover {
-      border-color: var(--primary);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      transform: translateX(4px);
-    }
-
-    .municipality-info h3 {
-      font-size: 1.1rem;
-      margin-bottom: 0.25rem;
-      color: var(--text);
-    }
-
-    .candidate-count {
-      color: var(--text-light);
-      font-size: 0.9rem;
-    }
-
-    .arrow {
-      color: var(--primary);
-      font-size: 1.5rem;
-      font-weight: 700;
-      transition: transform 0.2s;
-    }
-
-    .municipality-card:hover .arrow {
-      transform: translateX(4px);
-    }
-  </style>
 </Layout>
+
+<style>
+  .header-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    color: var(--primary);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    color: var(--text);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  .intro {
+    font-size: 1.15rem;
+    color: var(--text-light);
+    max-width: 850px;
+    line-height: 1.6;
+  }
+
+  .county-header-banner {
+    background: linear-gradient(135deg, #f0fdfa 0%, #e6fffa 100%);
+    border: 1px solid #99f6e4;
+    border-left: 6px solid var(--secondary);
+    border-radius: 0.75rem;
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .badge-county {
+    display: inline-block;
+    background: #ccfbf1;
+    color: #0f766e;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.25rem;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+
+  .ch-left h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .ch-left p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .wardens-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .warden-badge {
+    background: white;
+    border: 1px solid #ccfbf1;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.375rem;
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+
+  .content-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 2.5rem;
+    margin-bottom: 4rem;
+  }
+
+  .table-headline {
+    margin-bottom: 1.25rem;
+  }
+
+  .table-headline h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .table-headline .sub {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  .municipalities-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: white;
+  }
+
+  .mun-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    text-align: left;
+  }
+
+  .mun-table th {
+    background: var(--bg-alt);
+    padding: 0.875rem 1rem;
+    font-weight: 700;
+    color: var(--text-light);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mun-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .mun-link {
+    color: var(--text);
+    font-weight: 700;
+    display: block;
+  }
+
+  .mun-link:hover {
+    color: var(--primary);
+  }
+
+  .mun-type {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-light);
+  }
+
+  .mun-note-text {
+    font-size: 0.75rem;
+    color: #b45309;
+    margin: 0.25rem 0 0 0;
+    line-height: 1.3;
+  }
+
+  .mayor-name {
+    display: block;
+    color: var(--text);
+  }
+
+  .deputy-text {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-light);
+  }
+
+  .council-badge {
+    display: inline-block;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+  }
+
+  .method-tag {
+    font-size: 0.8rem;
+    color: var(--text-light);
+  }
+
+  .riding-link {
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  .mpp-name {
+    font-weight: 600;
+  }
+
+  .mpp-party {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-left: 0.25rem;
+  }
+
+  .btn-sm {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--primary);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .btn-sm:hover {
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.375rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  .btn-secondary {
+    background: white;
+    color: var(--secondary-dark);
+    border: 1px solid #99f6e4;
+  }
+
+  .btn-secondary:hover {
+    background: #f0fdfa;
+  }
+
+  .map-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .card-sidebar {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+  }
+
+  .card-sidebar h3 {
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+  }
+
+  .map-container {
+    border-radius: 0.375rem;
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+  }
+
+  .card-note h4 {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .card-note p {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+  }
+
+  .card-note ul {
+    padding-left: 1.25rem;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin: 0;
+  }
+
+  .card-note li {
+    margin-bottom: 0.5rem;
+  }
+
+  .sidebar-link {
+    display: inline-block;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--secondary);
+    margin-top: 0.5rem;
+  }
+
+  @media (max-width: 968px) {
+    .content-wrapper {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

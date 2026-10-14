@@ -3,30 +3,74 @@ interface Props {
   name: string;
   position: string;
   party?: string;
-  municipality: string;
+  riding?: string;
+  municipality?: string;
   image?: string;
   slug: string;
+  elected?: boolean;
+  role?: string;
+  votePercent?: string;
+  level?: string;
 }
 
-const { name, position, party, municipality, image, slug } = Astro.props;
+const { name, position, party, riding, municipality, image, slug, elected, role, votePercent, level } = Astro.props;
+
+// Determine party styling class
+const getPartyClass = (p?: string) => {
+  if (!p) return 'party-default';
+  const lower = p.toLowerCase();
+  if (lower.includes('conservative') || lower.includes('pc')) return 'party-pc';
+  if (lower.includes('liberal')) return 'party-lib';
+  if (lower.includes('new democratic') || lower.includes('ndp')) return 'party-ndp';
+  if (lower.includes('green')) return 'party-green';
+  return 'party-other';
+};
+
+const partyClass = getPartyClass(party);
 ---
 
-<article class="candidate-card">
+<article class={`candidate-card ${elected ? 'card-elected' : ''}`}>
   <a href={`/candidate/${slug}`}>
     <div class="card-image">
       {image ? (
         <img src={image} alt={name} />
       ) : (
-        <div class="placeholder-image">
+        <div class={`placeholder-image ${partyClass}`}>
           <span>{name.charAt(0)}</span>
         </div>
       )}
+      {elected && (
+        <span class="badge-elected">
+          {level === 'municipal' || position.toLowerCase().includes('mayor') || position.toLowerCase().includes('warden') ? 'In Office' : 'Elected MPP'}
+        </span>
+      )}
     </div>
     <div class="card-content">
-      <h3>{name}</h3>
-      <p class="position">{position}</p>
-      <p class="municipality">{municipality}</p>
-      {party && <p class="party">{party}</p>}
+      <div class="header-line">
+        <h3>{name}</h3>
+      </div>
+
+      {party && (
+        <span class={`party-tag ${partyClass}`}>
+          {party.replace(' Party of Ontario', '').replace('Party', '')}
+        </span>
+      )}
+
+      {role ? (
+        <p class="role">{role}</p>
+      ) : (
+        <p class="position">{position}</p>
+      )}
+
+      {riding && <p class="riding">📍 {riding}</p>}
+      {!riding && municipality && <p class="municipality">📍 {municipality}</p>}
+
+      {votePercent && (
+        <div class="vote-metric">
+          <span class="vote-label">Result:</span>
+          <span class="vote-val">{votePercent} of vote</span>
+        </div>
+      )}
     </div>
   </a>
 </article>
@@ -35,32 +79,42 @@ const { name, position, party, municipality, image, slug } = Astro.props;
   .candidate-card {
     background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 0.5rem;
+    border-radius: 0.625rem;
     overflow: hidden;
-    transition: box-shadow 0.2s, transform 0.2s;
+    transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+    display: flex;
+    flex-direction: column;
   }
 
   .candidate-card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    transform: translateY(-3px);
+    border-color: var(--primary);
+  }
+
+  .card-elected {
+    border-top: 4px solid var(--secondary);
   }
 
   .candidate-card a {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     text-decoration: none;
     color: inherit;
   }
 
   .card-image {
-    aspect-ratio: 3/2;
+    aspect-ratio: 16/10;
     overflow: hidden;
     background: var(--bg-alt);
+    position: relative;
   }
 
   .card-image img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
   }
 
   .placeholder-image {
@@ -69,37 +123,88 @@ const { name, position, party, municipality, image, slug } = Astro.props;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: white;
-    font-size: 3rem;
+    font-size: 3.5rem;
     font-weight: 700;
+    background: linear-gradient(135deg, #475569 0%, #334155 100%);
+  }
+
+  .badge-elected {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: #1e293b;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
   }
 
   .card-content {
     padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 0.4rem;
   }
 
-  h3 {
-    font-size: 1.25rem;
-    margin-bottom: 0.25rem;
+  .header-line h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
     color: var(--text);
+    line-height: 1.3;
+  }
+
+  .party-tag {
+    display: inline-block;
+    width: fit-content;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.25rem;
+    margin-bottom: 0.25rem;
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+  }
+
+  .role {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primary);
+    line-height: 1.4;
   }
 
   .position {
     color: var(--text-light);
-    font-size: 0.9rem;
-    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
   }
 
-  .municipality {
+  .riding, .municipality {
     color: var(--text-light);
     font-size: 0.85rem;
-    margin-bottom: 0.25rem;
+    margin-top: 0.25rem;
   }
 
-  .party {
-    color: var(--primary);
-    font-size: 0.85rem;
-    font-weight: 500;
+  .vote-metric {
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .vote-label {
+    color: var(--text-light);
+  }
+
+  .vote-val {
+    font-weight: 600;
+    color: var(--text);
   }
 </style>

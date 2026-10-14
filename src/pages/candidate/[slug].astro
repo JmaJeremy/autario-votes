@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
+import { MUNICIPALITIES_DATA } from '../../data/municipal';
 
 export async function getStaticPaths() {
   const candidates = await getCollection('candidates');
@@ -12,37 +13,116 @@ export async function getStaticPaths() {
 
 const { candidate } = Astro.props;
 const { Content } = await candidate.render();
+
+// Generate riding slug
+const ridingSlug = candidate.data.riding
+  ? candidate.data.riding.toLowerCase().replace(/[—–]/g, '-').replace(/\s+/g, '-')
+  : null;
+
+// Find matching municipality if applicable
+const matchingMun = candidate.data.municipality
+  ? MUNICIPALITIES_DATA.find(m =>
+      candidate.data.municipality!.toLowerCase().includes(m.name.toLowerCase()) ||
+      candidate.data.municipality!.toLowerCase().includes(m.slug) ||
+      m.name.toLowerCase().includes(candidate.data.municipality!.toLowerCase())
+    )
+  : null;
+
+// Determine party styling class
+const getPartyClass = (p?: string) => {
+  if (!p) return 'party-default';
+  const lower = p.toLowerCase();
+  if (lower.includes('conservative') || lower.includes('pc')) return 'party-pc';
+  if (lower.includes('liberal')) return 'party-lib';
+  if (lower.includes('new democratic') || lower.includes('ndp')) return 'party-ndp';
+  if (lower.includes('green')) return 'party-green';
+  return 'party-other';
+};
+
+const partyClass = getPartyClass(candidate.data.party);
 ---
 
-<Layout title={`${candidate.data.name} - ${candidate.data.position}`}>
-  <article class="container candidate-page">
+<Layout title={`${candidate.data.name} - ${candidate.data.position} - Autario Votes`}>
+    <nav class="breadcrumbs">
+      <a href="/">Home</a> &gt; 
+      <a href="/candidates">
+        {candidate.data.level === 'municipal' ? 'Mayors, Councillors & Trustees' : 'MPPs & Candidates'}
+      </a> &gt; 
+      <span>{candidate.data.name}</span>
+    </nav>
+
     <div class="candidate-header">
       <div class="candidate-image">
         {candidate.data.image ? (
           <img src={candidate.data.image} alt={candidate.data.name} />
         ) : (
-          <div class="placeholder-image">
+          <div class={`placeholder-image ${partyClass}`}>
             <span>{candidate.data.name.charAt(0)}</span>
           </div>
         )}
       </div>
+
       <div class="candidate-info">
         <div class="name-row">
           <h1>{candidate.data.name}</h1>
-          {candidate.data.incumbent && <span class="incumbent-tag">Incumbent</span>}
+          {candidate.data.elected && (
+            <span class={`badge-tag ${candidate.data.level === 'municipal' ? 'tag-municipal' : 'tag-elected'}`}>
+              {candidate.data.level === 'municipal' 
+                ? (candidate.data.position.includes('Mayor') ? 'Elected Mayor' : (candidate.data.position.includes('Trustee') ? 'Elected Trustee' : 'Elected Official')) 
+                : 'Elected MPP'}
+            </span>
+          )}
+          {candidate.data.incumbent && <span class="badge-tag tag-incumbent">Incumbent</span>}
         </div>
-        <p class="position">{candidate.data.position}, <a href={`/municipalities/${candidate.data.municipality.toLowerCase().replace(/\s+/g, '-')}`}>{candidate.data.municipality}</a></p>
-        {candidate.data.party && <p class="party">{candidate.data.party}</p>}
+
+        {candidate.data.role && (
+          <p class="role-title">{candidate.data.role}</p>
+        )}
+
+        <p class="position-title">{candidate.data.position}</p>
+
+        {candidate.data.party && (
+          <div class="party-row">
+            <span class={`party-badge ${partyClass}`}>{candidate.data.party}</span>
+          </div>
+        )}
+
+        {candidate.data.riding && (
+          <p class="riding-line provincial-only">
+            <strong>Provincial Riding:</strong>{' '}
+            <a href={`/ridings/${ridingSlug}`}>{candidate.data.riding}</a>
+          </p>
+        )}
+
+        {candidate.data.municipality && (
+          <p class="mun-line">
+            <strong>Community / Municipality:</strong>{' '}
+            {matchingMun ? (
+              <a href={`/municipalities/${matchingMun.slug}`}>{candidate.data.municipality}</a>
+            ) : (
+              candidate.data.municipality
+            )}
+          </p>
+        )}
+
+        {candidate.data.votePercent && (
+          <div class="election-result-box">
+            <span class="result-label">{candidate.data.election || 'Election Result'}:</span>
+            <span class="result-val">
+              {candidate.data.votes ? `${candidate.data.votes.toLocaleString()} votes (${candidate.data.votePercent})` : candidate.data.votePercent}
+            </span>
+          </div>
+        )}
         
         <div class="contact-links">
           {candidate.data.website && (
             <a href={candidate.data.website} target="_blank" rel="noopener noreferrer">
-              🌐 Website
+              🌐 Official Website
             </a>
           )}
           {candidate.data.email && (
             <a href={`mailto:${candidate.data.email}`}>
-              ✉️ Email
+              ✉️ {candidate.data.email}
             </a>
           )}
           {candidate.data.phone && (
@@ -59,163 +139,238 @@ const { Content } = await candidate.render();
     </div>
 
     <div class="back-link">
-      <a href="/candidates">← Back to all candidates</a>
+      <a href="/candidates">← Back to all Directory Profiles</a>
+      {candidate.data.riding && (
+        <a href={`/ridings/${ridingSlug}`} class="provincial-only">View {candidate.data.riding} Riding Profile →</a>
+      )}
+      {matchingMun && (
+        <a href={`/municipalities/${matchingMun.slug}`} class="municipal-only">View {matchingMun.name} Council & Details →</a>
+      )}
     </div>
   </article>
+</Layout>
 
-  <style>
-    .candidate-page {
-      padding: 3rem 0;
-      max-width: 900px;
-    }
+<style>
+  .candidate-page {
+    padding: 2.5rem 0 4rem 0;
+    max-width: 900px;
+  }
 
+  .breadcrumbs {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+  }
+
+  .breadcrumbs a {
+    color: var(--primary);
+  }
+
+  .candidate-header {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 2.5rem;
+    margin-bottom: 3rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .candidate-image {
+    aspect-ratio: 1/1;
+    max-height: 240px;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+  }
+
+  .candidate-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .placeholder-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #475569 0%, #334155 100%);
+  }
+
+  .name-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.25rem;
+  }
+
+  .candidate-info h1 {
+    font-size: 2.25rem;
+    margin: 0;
+    color: var(--text);
+  }
+
+  .badge-tag {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tag-elected {
+    background: #1e293b;
+    color: white;
+  }
+
+  .tag-municipal {
+    background: var(--secondary);
+    color: white;
+  }
+
+  .tag-incumbent {
+    background: #e2e8f0;
+    color: #334155;
+  }
+
+  .role-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0.25rem 0;
+  }
+
+  .position-title {
+    font-size: 1.05rem;
+    color: var(--text-light);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .party-row {
+    margin-bottom: 0.75rem;
+  }
+
+  .party-badge {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.25rem;
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+  }
+
+  .riding-line, .mun-line {
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 0.35rem;
+  }
+
+  .election-result-box {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    margin: 0.75rem 0 1rem 0;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .result-label {
+    color: var(--text-light);
+    font-weight: 600;
+  }
+
+  .result-val {
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .contact-links a {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .contact-links a:hover {
+    background: var(--bg);
+    border-color: var(--primary);
+    text-decoration: none;
+  }
+
+  .candidate-bio {
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+
+  .candidate-bio :global(h2) {
+    font-size: 1.75rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--primary);
+  }
+
+  .candidate-bio :global(h3) {
+    font-size: 1.25rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .candidate-bio :global(ul) {
+    padding-left: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .candidate-bio :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .candidate-bio :global(p) {
+    margin-bottom: 1rem;
+  }
+
+  .back-link {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
     .candidate-header {
-      display: grid;
-      grid-template-columns: 250px 1fr;
-      gap: 2rem;
-      margin-bottom: 3rem;
-      padding-bottom: 2rem;
-      border-bottom: 2px solid var(--border);
+      grid-template-columns: 1fr;
     }
 
     .candidate-image {
-      aspect-ratio: 3/4;
-      border-radius: 0.5rem;
-      overflow: hidden;
-      background: var(--bg-alt);
+      max-width: 180px;
+      margin: 0 auto;
     }
-
-    .candidate-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .placeholder-image {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      color: white;
-      font-size: 5rem;
-      font-weight: 700;
-    }
-
-    .name-row {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 0.5rem;
-    }
-
-    .candidate-info h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0;
-      color: var(--text);
-    }
-
-    .incumbent-tag {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      background: var(--primary);
-      color: white;
-      font-size: 0.875rem;
-      font-weight: 600;
-      border-radius: 0.25rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .position {
-      font-size: 1.25rem;
-      color: var(--text-light);
-      margin-bottom: 0.25rem;
-    }
-
-    .party {
-      color: var(--primary);
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-    }
-
-    .contact-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .contact-links a {
-      display: inline-block;
-      padding: 0.5rem 1rem;
-      background: var(--bg-alt);
-      border: 1px solid var(--border);
-      border-radius: 0.375rem;
-      font-size: 0.9rem;
-      transition: background 0.2s;
-    }
-
-    .contact-links a:hover {
-      background: var(--bg);
-      text-decoration: none;
-    }
-
-    .candidate-bio {
-      font-size: 1.05rem;
-      line-height: 1.8;
-    }
-
-    .candidate-bio :global(h2) {
-      font-size: 1.75rem;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-      color: var(--primary);
-    }
-
-    .candidate-bio :global(h3) {
-      font-size: 1.25rem;
-      margin-top: 1.5rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .candidate-bio :global(ul) {
-      padding-left: 2rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .candidate-bio :global(li) {
-      margin-bottom: 0.5rem;
-    }
-
-    .candidate-bio :global(p) {
-      margin-bottom: 1rem;
-    }
-
-    .back-link {
-      margin-top: 3rem;
-      padding-top: 2rem;
-      border-top: 1px solid var(--border);
-    }
-
-    .back-link a {
-      font-weight: 600;
-    }
-
-    @media (max-width: 768px) {
-      .candidate-header {
-        grid-template-columns: 1fr;
-      }
-
-      .candidate-image {
-        max-width: 300px;
-        margin: 0 auto;
-      }
-
-      .candidate-info h1 {
-        font-size: 2rem;
-      }
-    }
-  </style>
-</Layout>
+  }
+</style>

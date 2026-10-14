@@ -1,7 +1,10 @@
 ---
 name: Alex Nuttall
-position: Mayor
+position: Mayor of Barrie
+riding: Barrie—Innisfil / Barrie—Springwater—Oro-Medonte
 municipality: Barrie
+level: municipal
+elected: true
 website: https://www.alexnuttall.ca
 email: officeofthemayor@barrie.ca
 phone: 705-792-7900

@@ -1,26 +1,373 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { SCHOOL_BOARDS } from "../data/municipal";
 ---
 
 <Layout 
-  title="General Information - Autario Votes - Simcoe County"
-  description="General information about the upcoming election in Simcoe County, ON."
+  title="Resources & Media - Provincial & Municipal - Autario Votes"
+  description="Comprehensive guide to Queen's Park resources, Simcoe County municipal administration, school boards, and local news coverage."
 >
   <div class="container page-content">
-    <h1>General Information</h1>
-    <p>Useful sources of election news in Simcoe County</p>
-    <section>
-      <h2>Media</h2>
-      <h3>Barrie</h3>
-      <ul>
-        <li><a href="https://www.ctvnews.ca/barrie/" target="_blank">CTV News Barrie</a></li>
-        <li><a href="https://barrie360.com" target="_blank">Barrie360</a></li>
-        <li><a href="https://www.rogerstv.com/barrie/home" target="_blank">Rogers TV Barrie</a></li>
-      </ul>
-      <h3>Orillia</h3>
-      <ul>
-        <li><a href="https://www.orilliamatters.com/local-news" target="_blank">Orillia Matters</a></li>
-      </ul>
+    <div class="header-section">
+      <span class="eyebrow">Civic Resources & Media</span>
+      <h1>Provincial & Municipal Public Affairs Resources</h1>
+      <p class="intro">
+        Access official government archives, municipal directories, school board governance portals, and trusted regional journalism covering Simcoe County and Queen's Park.
+      </p>
+    </div>
+
+    <!-- 1. Municipal & County Governance Resources -->
+    <section class="info-section-card card-mun">
+      <div class="section-icon">🏙️</div>
+      <div class="section-content">
+        <h2>Simcoe County Municipal & Regional Governance</h2>
+        <p>Direct public access to County Council administration, local municipal legislation, and property tax voter directories:</p>
+        
+        <div class="links-grid">
+          <a href="https://www.simcoe.ca" target="_blank" rel="noopener noreferrer" class="resource-link-card">
+            <h3>County of Simcoe Official Portal (simcoe.ca) ↗</h3>
+            <p>Access County Council agendas, minutes, Warden announcements, LINX regional transit schedules, and paramedic services.</p>
+          </a>
+
+          <a href="https://www.amo.on.ca" target="_blank" rel="noopener noreferrer" class="resource-link-card">
+            <h3>Association of Municipalities of Ontario (AMO) ↗</h3>
+            <p>Advocacy body for Ontario's 444 municipal governments, tracking provincial-municipal funding, housing legislation, and fiscal policy.</p>
+          </a>
+
+          <a href="https://www.voterlookup.ca" target="_blank" rel="noopener noreferrer" class="resource-link-card">
+            <h3>VoterLookup.ca (MPAC) ↗</h3>
+            <p>Check and update your municipal electoral roll information and confirm your school board support designation.</p>
+          </a>
+
+          <a href="https://www.ontario.ca/page/municipal-elections" target="_blank" rel="noopener noreferrer" class="resource-link-card">
+            <h3>Ministry of Municipal Affairs & Housing (MMAH) ↗</h3>
+            <p>Official provincial guides for candidates, third-party advertisers, and voters under the <em>Municipal Elections Act, 1996</em>.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. School Board Governance Portals -->
+    <section class="info-section-card card-school">
+      <div class="section-icon">🎒</div>
+      <div class="section-content">
+        <h2>Simcoe County School Board Portals</h2>
+        <p>Governance resources, trustee ward boundaries, and public board meeting broadcasts:</p>
+
+        <div class="links-grid">
+          {SCHOOL_BOARDS.map((sb) => (
+            <a href={sb.website} target="_blank" rel="noopener noreferrer" class="resource-link-card">
+              <h3>{sb.name} ↗</h3>
+              <p><strong>Board Chair:</strong> {sb.chair} • {sb.type} education covering Simcoe County and surrounding districts.</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Provincial Government & Legislative Portals -->
+    <section class="info-section-card card-prov">
+      <div class="section-icon">🏛️</div>
+      <div class="section-content">
+        <h2>Queen's Park & Legislative Portals</h2>
+        <p>Direct public access to the Legislative Assembly of Ontario, legislation, and electoral operations:</p>
+        
+        <div class="links-grid">
+          <a href="https://www.ola.org" target="_blank" rel="noopener noreferrer" class="resource-link-card">
+            <h3>Legislative Assembly of Ontario (ola.org) ↗</h3>
+            <p>Access Hansard transcripts, legislative committees, member voting records, and live video proceedings from Queen's Park.</p>
+          </a>
+
+          <a href="https://www.elections.on.ca" target="_blank" rel="noopener noreferrer" class="resource-link-card">
+            <h3>Elections Ontario (elections.on.ca) ↗</h3>
+            <p>Official provincial electoral administration, past election statistical summaries, district boundary maps, and returning offices.</p>
+          </a>
+
+          <a href="https://registertovoteon.ca" target="_blank" rel="noopener noreferrer" class="resource-link-card">
+            <h3>eRegister (RegisterToVoteON.ca) ↗</h3>
+            <p>Check, update, or add your voter registration in the permanent Ontario register of electors for provincial elections.</p>
+          </a>
+
+          <a href="https://www.ontario.ca/laws" target="_blank" rel="noopener noreferrer" class="resource-link-card">
+            <h3>e-Laws Ontario ↗</h3>
+            <p>Official consolidated database of Ontario provincial statutes, regulations, and order-in-council appointments.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Journalism & Regional News Outlets -->
+    <section class="info-section-card">
+      <div class="section-icon">📰</div>
+      <div class="section-content">
+        <h2>Regional & Queen's Park Journalism</h2>
+        <p>Specialized political coverage, policy reporting, and local investigative journalism in Ontario:</p>
+
+        <div class="media-categories">
+          <!-- Village Media Network -->
+          <div class="media-subgroup">
+            <h3>Local Daily Online News (Village Media Network)</h3>
+            <div class="pill-links-grid">
+              <a href="https://www.barrietoday.com" target="_blank" rel="noopener noreferrer" class="pill-link">BarrieToday ↗</a>
+              <a href="https://www.orilliamatters.com" target="_blank" rel="noopener noreferrer" class="pill-link">OrilliaMatters ↗</a>
+              <a href="https://www.collingwoodtoday.ca" target="_blank" rel="noopener noreferrer" class="pill-link">CollingwoodToday ↗</a>
+              <a href="https://www.bradfordtoday.ca" target="_blank" rel="noopener noreferrer" class="pill-link">BradfordToday ↗</a>
+              <a href="https://www.midlandtoday.ca" target="_blank" rel="noopener noreferrer" class="pill-link">MidlandToday ↗</a>
+              <a href="https://www.innisfiltoday.com" target="_blank" rel="noopener noreferrer" class="pill-link">InnisfilToday ↗</a>
+            </div>
+          </div>
+
+          <!-- Broadcast & Provincial Media -->
+          <div class="media-subgroup">
+            <h3>Provincial & Broadcast Media</h3>
+            <div class="links-grid">
+              <a href="https://www.thetrillium.ca" target="_blank" rel="noopener noreferrer" class="resource-link-card">
+                <h3>The Trillium ↗</h3>
+                <p>Non-partisan, dedicated Queen's Park news service by Village Media providing insider reporting on Ontario policy and legislation.</p>
+              </a>
+
+              <a href="https://www.tvo.org" target="_blank" rel="noopener noreferrer" class="resource-link-card">
+                <h3>TVO Today & The Agenda ↗</h3>
+                <p>Ontario's public educational media network offering in-depth political discussion, podcast analysis, and current affairs.</p>
+              </a>
+
+              <a href="https://www.ctvnews.ca/barrie/" target="_blank" rel="noopener noreferrer" class="resource-link-card">
+                <h3>CTV News Barrie ↗</h3>
+                <p>Regional television newsroom broadcasting evening bulletins and breaking digital news covering Simcoe County and central Ontario.</p>
+              </a>
+
+              <a href="https://www.rogerstv.com/barrie/home" target="_blank" rel="noopener noreferrer" class="resource-link-card">
+                <h3>Rogers TV Simcoe County ↗</h3>
+                <p>Community broadcast channel airing municipal council meetings, election debates, and local civic affairs discussions.</p>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Key Civic Issues -->
+    <section class="info-section-card">
+      <div class="section-icon">🔍</div>
+      <div class="section-content">
+        <h2>Key Regional Civic Issues in Simcoe County</h2>
+        <p>Major issues that continually shape municipal and provincial policy for Simcoe County:</p>
+        <div class="issues-grid">
+          <div class="issue-item">
+            <h3>County Infrastructure & Transportation</h3>
+            <p>Advancing construction of the Bradford Bypass (connecting Hwy 400 & 404), expanding LINX regional transit, and upgrading county arterial road networks.</p>
+          </div>
+          <div class="issue-item">
+            <h3>Hospital Redevelopments & Healthcare</h3>
+            <p>Provincial capital approvals and municipal funding partnerships for Collingwood General & Marine Hospital, Stevenson Memorial in Alliston, and RVH South Campus in Innisfil.</p>
+          </div>
+          <div class="issue-item">
+            <h3>Environment & Lake Simcoe Protection</h3>
+            <p>Safeguarding the Lake Simcoe and Georgian Bay watersheds, protecting the Holland Marsh agricultural specialty basin, and managing aggregate extraction.</p>
+          </div>
+          <div class="issue-item">
+            <h3>School Capacity & Growth Pressures</h3>
+            <p>Managing rapid enrolment growth across public and Catholic schools in high-growth towns like Bradford, Innisfil, Midhurst, and Alliston.</p>
+          </div>
+        </div>
+      </div>
     </section>
   </div>
 </Layout>
+
+<style>
+  .header-section {
+    margin-bottom: 3rem;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    color: var(--primary);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-size: 2.75rem;
+    margin-bottom: 1rem;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .intro {
+    font-size: 1.15rem;
+    color: var(--text-light);
+    max-width: 850px;
+    line-height: 1.6;
+  }
+
+  .info-section-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+    display: flex;
+    gap: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  }
+
+  .card-mun {
+    border-left: 6px solid var(--secondary);
+  }
+
+  .card-school {
+    border-left: 6px solid #7c3aed;
+  }
+
+  .card-prov {
+    border-left: 6px solid var(--primary);
+  }
+
+  .section-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .section-content {
+    flex-grow: 1;
+  }
+
+  .section-content h2 {
+    font-size: 1.75rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .section-content p {
+    color: var(--text-light);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .resource-link-card {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .resource-link-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    text-decoration: none;
+  }
+
+  .resource-link-card h3 {
+    font-size: 1.05rem;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .card-mun .resource-link-card h3 {
+    color: var(--secondary-dark);
+  }
+
+  .card-school .resource-link-card h3 {
+    color: #6d28d9;
+  }
+
+  .resource-link-card p {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .media-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .media-subgroup h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+
+  .pill-links-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .pill-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--primary);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .pill-link:hover {
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+  }
+
+  .issues-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .issue-item {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+  }
+
+  .issue-item h3 {
+    font-size: 1.05rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .issue-item p {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .info-section-card {
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1.5rem;
+    }
+
+    .section-icon {
+      font-size: 2rem;
+    }
+  }
+</style>

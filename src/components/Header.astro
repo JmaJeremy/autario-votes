@@ -4,81 +4,243 @@ const currentPath = Astro.url.pathname;
 
 <header>
   <div class="container">
-    <nav>
-      <a href="/" class="logo">
-        <span class="logo-icon">🗳️</span>
-        <span>Autario Votes - Simcoe County 2026</span>
-      </a>
-      <ul class="nav-links">
-        <li><a href="/" class:list={{ active: currentPath === '/' }}>Home</a></li>
-        <li><a href="/voting-process" class:list={{ active: currentPath === '/voting-process' }}>How to Vote</a></li>
-        <li><a href="/municipalities" class:list={{ active: currentPath.startsWith('/municipalities') }}>Municipalities</a></li>
-        <li><a href="/candidates" class:list={{ active: currentPath.startsWith('/candidates') }}>Candidates</a></li>
-        <li><a href="/information" class:list={{ active: currentPath.startsWith('/information') }}>General Information</a></li>
-      </ul>
-    </nav>
+    <div class="header-main">
+      <nav class="nav-top">
+        <a href="/" class="logo">
+          <span class="logo-icon">🗳️</span>
+          <div class="logo-text">
+            <span class="site-title">Autario Votes</span>
+            <span class="site-tagline">Simcoe County • Provincial & Municipal</span>
+          </div>
+        </a>
+
+        <!-- Election Level Selector Dropdown -->
+        <div class="election-selector-container">
+          <label for="election-level-select" class="selector-label">Election Level:</label>
+          <div class="select-box">
+            <select id="election-level-select" aria-label="Switch election information level">
+              <option value="municipal" selected>🏙️ Simcoe County Municipal (2026)</option>
+              <option value="provincial">🏛️ Ontario Provincial</option>
+            </select>
+            <span class="select-chevron">▼</span>
+          </div>
+        </div>
+      </nav>
+
+      <nav class="nav-bottom">
+        <ul class="nav-links">
+          <li><a href="/" class:list={{ active: currentPath === '/' }}>Home</a></li>
+          
+          <!-- Provincial Mode Nav Items -->
+          <li class="provincial-only"><a href="/ridings" class:list={{ active: currentPath.startsWith('/ridings') }}>Provincial Ridings</a></li>
+          <li class="provincial-only"><a href="/candidates" class:list={{ active: currentPath.startsWith('/candidates') || currentPath.startsWith('/candidate/') }}>MPPs & Candidates</a></li>
+          
+          <!-- Municipal Mode Nav Items -->
+          <li class="municipal-only"><a href="/municipalities" class:list={{ active: currentPath.startsWith('/municipalities') }}>Municipalities & Councils</a></li>
+          <li class="municipal-only"><a href="/candidates" class:list={{ active: currentPath.startsWith('/candidates') || currentPath.startsWith('/candidate/') }}>Mayors, Councillors & Trustees</a></li>
+
+          <li><a href="/voting-process" class:list={{ active: currentPath === '/voting-process' }}>How to Vote</a></li>
+          <li><a href="/information" class:list={{ active: currentPath.startsWith('/information') }}>Resources & Media</a></li>
+        </ul>
+      </nav>
+    </div>
   </div>
 </header>
+
+<script is:inline>
+  (function() {
+    const select = document.getElementById('election-level-select');
+    if (!select) return;
+
+    // Set initial value from current document attribute
+    const currentView = document.documentElement.getAttribute('data-election-view') || 'municipal';
+    select.value = currentView;
+
+    // Handle change
+    select.addEventListener('change', function(e) {
+      const newView = e.target.value;
+      document.documentElement.setAttribute('data-election-view', newView);
+      try {
+        localStorage.setItem('autario_election_view', newView);
+      } catch (err) {}
+
+      // Update URL query parameter without full reload
+      const url = new URL(window.location.href);
+      url.searchParams.set('election', newView);
+      window.history.replaceState({}, '', url.toString());
+
+      // If user is on a riding page and switches to municipal, redirect to municipalities
+      if (newView === 'municipal' && window.location.pathname.startsWith('/ridings')) {
+        window.location.href = '/municipalities?election=municipal';
+        return;
+      }
+
+      // Dispatch event for in-page reactive components
+      window.dispatchEvent(new CustomEvent('electionViewChange', { detail: newView }));
+    });
+
+    // Listen to changes dispatched elsewhere
+    window.addEventListener('electionViewChange', function(e) {
+      if (select.value !== e.detail) {
+        select.value = e.detail;
+      }
+    });
+  })();
+</script>
 
 <style>
   header {
     background: var(--bg);
     border-bottom: 1px solid var(--border);
-    padding: 1rem 0;
+    padding: 0.75rem 0;
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   }
 
-  nav {
+  .header-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .nav-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #f1f5f9;
   }
 
   .logo {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 1.25rem;
-    font-weight: 700;
+    gap: 0.75rem;
     color: var(--primary);
     text-decoration: none;
   }
 
   .logo:hover {
     text-decoration: none;
-    opacity: 0.8;
+    opacity: 0.9;
   }
 
   .logo-icon {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
+    line-height: 1;
+  }
+
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .site-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--primary);
+  }
+
+  .site-tagline {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-light);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .election-selector-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    padding: 0.35rem 0.75rem;
+  }
+
+  .selector-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .select-box {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  #election-level-select {
+    appearance: none;
+    background: transparent;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--primary);
+    cursor: pointer;
+    padding-right: 1.25rem;
+    outline: none;
+  }
+
+  #election-level-select:focus {
+    color: var(--primary-dark);
+  }
+
+  .select-chevron {
+    position: absolute;
+    right: 0;
+    font-size: 0.65rem;
+    color: #64748b;
+    pointer-events: none;
+  }
+
+  .nav-bottom {
+    display: flex;
+    justify-content: flex-start;
   }
 
   .nav-links {
     display: flex;
     list-style: none;
-    gap: 2rem;
+    gap: 1.75rem;
+    flex-wrap: wrap;
+    align-items: center;
   }
 
   .nav-links a {
     color: var(--text);
-    font-weight: 500;
-    padding: 0.5rem 0;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.25rem 0;
     border-bottom: 2px solid transparent;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
   }
 
   .nav-links a:hover,
   .nav-links a.active {
     text-decoration: none;
+    color: var(--primary);
     border-bottom-color: var(--primary);
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 768px) {
+    .nav-top {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .election-selector-container {
+      width: 100%;
+      justify-content: space-between;
+    }
+
     .nav-links {
       gap: 1rem;
     }
