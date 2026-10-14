@@ -65,7 +65,7 @@ const partyClass = getPartyClass(candidate.data.party);
       <div class="candidate-info">
         <div class="name-row">
           <h1>{candidate.data.name}</h1>
-          {(candidate.data.incumbent || candidate.data.elected) && (
+          {candidate.data.incumbent && (
             <span class="badge-tag tag-incumbent">Incumbent</span>
           )}
         </div>

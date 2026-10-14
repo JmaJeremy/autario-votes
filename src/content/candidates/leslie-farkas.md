@@ -6,9 +6,7 @@ municipality: "Wasaga Beach"
 level: municipal
 elected: false
 incumbent: false
-votes: 1084
-votePercent: "13.75%"
-election: "2022 Wasaga Beach Mayoral Election"
+election: "2026 Wasaga Beach Municipal Election"
 ---
 
-**Leslie Farkas** ran for Mayor of Wasaga Beach in 2022, receiving 1,084 votes (13.75%) as a local business owner and beachfront revitalization advocate.
+**Leslie Farkas** is a certified candidate for Mayor of the Town of Wasaga Beach in the 2026 municipal election. A local business owner and community advocate, Farkas is campaigning on beachfront revitalisation, transparent town council decision-making, and balanced community growth.

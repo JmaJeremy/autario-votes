@@ -6,11 +6,9 @@ municipality: "Collingwood"
 level: municipal
 elected: false
 incumbent: false
-votes: 2907
-votePercent: "37.3%"
-election: "2022 Collingwood Mayoral Election"
+election: "2026 Collingwood Municipal Election"
 ---
 
-**Norm Sandberg** was a candidate for Mayor of Collingwood in 2022, finishing second with 2,907 votes (37.3%).
+**Norm Sandberg** is a certified candidate for Mayor of the Town of Collingwood in the 2026 municipal election. 
 
-Sandberg served as Collingwood's Deputy Mayor from 2018 to 2022 and represented the community on County of Simcoe Council, focusing on affordable housing partnerships and water treatment plant expansions.
+Sandberg previously served as Collingwood's Deputy Mayor (2018–2022), Town Councillor, and on County of Simcoe Council, as well as serving as past president of the Association of Municipalities of Ontario (AMO). His priorities include water treatment plant expansions, affordable housing partnerships, and responsible municipal infrastructure investments.

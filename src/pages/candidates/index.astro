@@ -18,7 +18,7 @@ const rawMayoralCandidates = MUNICIPALITIES_DATA.flatMap(m =>
     office: c.office,
     municipality: m.name,
     munSlug: m.slug,
-    incumbent: c.incumbent || c.elected,
+    incumbent: Boolean(c.incumbent),
     slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
     note: c.note
   }))
@@ -67,7 +67,7 @@ const sortedProvincialCandidates = sortByLastName(
     municipality: c.data.municipality,
     image: c.data.image,
     slug: c.slug,
-    incumbent: c.data.incumbent || c.data.elected,
+    incumbent: Boolean(c.data.incumbent),
     role: c.data.role
   }))
 );
