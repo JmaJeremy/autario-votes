@@ -120,7 +120,12 @@ const { munDetail, mapData, riding, candidates } = Astro.props;
           <div class="race-header">
             <div>
               <h3>Candidates Pool (Alphabetical by Last Name)</h3>
-              <p class="sub-text">Candidates contesting Head of Council (Mayor) for {munDetail.name}:</p>
+              <p class="sub-text">
+                Candidates contesting Head of Council (Mayor) for {munDetail.name}
+                {munDetail.electionUrl && (
+                  <span> • <a href={munDetail.electionUrl} target="_blank" rel="noopener noreferrer" class="portal-link">Official Municipal Elections Portal ↗</a></span>
+                )}:
+              </p>
             </div>
             <span class="race-badge">{munDetail.candidates.length} Candidates</span>
           </div>
@@ -253,6 +258,9 @@ const { munDetail, mapData, riding, candidates } = Astro.props;
           <a href={munDetail.website} target="_blank" rel="noopener noreferrer" class="link-ext">
             Official Website ↗
           </a>
+          {munDetail.electionUrl && (
+            <span> • <a href={munDetail.electionUrl} target="_blank" rel="noopener noreferrer" class="link-ext">Elections Portal ↗</a></span>
+          )}
         </div>
       </div>
     </section>
