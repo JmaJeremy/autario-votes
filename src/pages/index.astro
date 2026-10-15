@@ -82,7 +82,8 @@ const provincialCandidates = allContentCandidates.filter(c => c.data.level !== '
         <!-- Municipal Race Cards -->
         <div class="races-list" id="mun-races-list">
           {MUNICIPALITIES_DATA.map((m) => {
-            const sortedCandidates = sortByLastName(m.candidates || []);
+            const mayorCandidates = (m.candidates || []).filter(c => c.office === 'Mayor' || !c.office);
+            const sortedCandidates = sortByLastName(mayorCandidates);
             return (
               <div class="race-block-card" data-mun={m.slug}>
                 <div class="race-header">
