@@ -1262,19 +1262,19 @@ export const MUNICIPALITIES_DATA: MunicipalityDetail[] = [
       title: 'Deputy Mayor of Severn (Not Seeking Re-election)'
     },
     councillors: [
-      { name: 'Mark Douglas', title: 'Ward 1 Councillor', ward: 'Ward 1' },
-      { name: 'Bill Pettersen', title: 'Ward 2 Councillor', ward: 'Ward 2' },
+      { name: 'Mark Taylor', title: 'Ward 1 Councillor', ward: 'Ward 1' },
+      { name: 'Dan Janssen', title: 'Ward 2 Councillor', ward: 'Ward 2' },
       { name: 'Philip Brennan', title: 'Ward 3 Councillor', ward: 'Ward 3' },
-      { name: 'Dan Janssen', title: 'Ward 4 Councillor', ward: 'Ward 4' },
-      { name: 'Wanda Minnings', title: 'Ward 5 Councillor', ward: 'Ward 5' }
+      { name: 'Wanda Minnings', title: 'Ward 4 Councillor', ward: 'Ward 4' },
+      { name: 'Jim McIntyre', title: 'Ward 5 Councillor', ward: 'Ward 5' }
     ],
     candidates: [
       { name: 'Mike Burkett', office: 'Mayor', incumbent: true, slug: 'mike-burkett', note: 'Sitting Mayor of Severn' },
       { name: 'Jane Dunlop', office: 'Mayor', incumbent: false, note: 'Former Severn Councillor' },
       { name: 'Danielle Falardeau', office: 'Mayor', incumbent: false },
       { name: 'Suzanne Burtenshaw', office: 'Deputy Mayor', incumbent: false },
-      { name: 'Dan Janssen', office: 'Deputy Mayor', incumbent: false, note: 'Sitting Ward 4 Councillor' },
-      { name: 'Wanda Minnings', office: 'Deputy Mayor', incumbent: false, note: 'Sitting Ward 5 Councillor' },
+      { name: 'Dan Janssen', office: 'Deputy Mayor', incumbent: false, note: 'Sitting Ward 2 Councillor' },
+      { name: 'Wanda Minnings', office: 'Deputy Mayor', incumbent: false, note: 'Sitting Ward 4 Councillor' },
       { name: 'Jacob Bolyea', office: 'Ward 1 Councillor', ward: 'Ward 1', incumbent: false },
       { name: 'Jim Gleadall', office: 'Ward 1 Councillor', ward: 'Ward 1', incumbent: false },
       { name: 'Keith Prentice', office: 'Ward 1 Councillor', ward: 'Ward 1', incumbent: false },
