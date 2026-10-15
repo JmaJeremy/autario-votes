@@ -12,7 +12,7 @@ email: dmeasures@clearview.ca
 phone: 705-428-6230
 ---
 
-**Doug Measures** is the **Mayor of the Township of Clearview**, first elected as Mayor in 2018 and re-elected in 2022. Prior to becoming Mayor, he served as Deputy Mayor and councillor for Stayner.
+**Doug Measures** is the **Mayor of the Township of Clearview**, first elected as Mayor in 2018 and acclaimed unopposed in 2022. Prior to becoming Mayor, he served three terms as Ward 1 Councillor (2010–2018).
 
 ### Municipal Priorities
 * **County of Simcoe Council**: Member of County Council representing Stayner, Creemore, New Lowell, and Nottawa.

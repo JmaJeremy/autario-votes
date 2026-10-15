@@ -49,8 +49,8 @@ const { title, description = "Your trusted source for local election information
 
       :root {
         /* Non-partisan civic palette */
-        --primary: #1e293b;        /* Authoritative Neutral Slate */
-        --primary-dark: #0f172a;   /* Deep Slate */
+        --primary: #262626;        /* Authoritative Neutral Charcoal (not party blue) */
+        --primary-dark: #171717;   /* Deep Charcoal */
         --secondary: #0f766e;      /* Civic Teal */
         --secondary-dark: #115e59;
         --accent: #0f766e;         /* Neutral Civic Accent */
@@ -71,6 +71,15 @@ const { title, description = "Your trusted source for local election information
         --new-blue: #1e293b;
         --success: #15803d;
         --success-bg: #dcfce7;
+      }
+
+      /* Provincial view: Elections Ontario-style neutral charcoal + gold palette,
+         deliberately distinct from any party's colour (PC blue, Liberal red, NDP
+         orange, Green). Swaps out the civic teal accent used in municipal view. */
+      html[data-election-view="provincial"] {
+        --secondary: #a9760a;
+        --secondary-dark: #7a5407;
+        --accent: #a9760a;
       }
 
       /* Dynamic election view switcher visibility - default is municipal */

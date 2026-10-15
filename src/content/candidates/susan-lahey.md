@@ -33,5 +33,5 @@ Her extensive community involvement includes serving on the Governance Committee
 * Supporting the Holland Marsh agricultural basin and Holland River environmental stewardship.
 
 ### Constituency Office
-* **Keswick:** 45 Grist Mill Road, Unit 8, Keswick, ON L4P 3E9
+* **Holland Landing:** 45 Grist Mill Road, Unit 9, Holland Landing, ON L9N 1M7
 * **Bradford:** Serving residents across Bradford West Gwillimbury
