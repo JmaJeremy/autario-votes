@@ -6,7 +6,7 @@ riding: Simcoe North
 level: municipal
 incumbent: true
 elected: true
-role: Warden of Simcoe County (2023–2026)
+role: Warden of Simcoe County (2023–2024; Acclaimed for Second Term, 2025–2026)
 website: https://www.ramara.ca
 phone: 705-484-5374
 ---
@@ -15,4 +15,4 @@ phone: 705-484-5374
 
 As Warden, Clarke chairs County of Simcoe Council, guiding county-wide programs including Simcoe County Paramedic Services, regional transit (LINX), affordable and social housing developments, long-term care facilities, and solid waste collection across the 16 member municipalities.
 
-A lifelong resident and fourth-generation farmer in Ramara, Clarke has served on Ramara municipal council for over two decades.
+A lifelong resident and fifth-generation farmer in Ramara, Clarke has served on Ramara municipal council for over two decades.

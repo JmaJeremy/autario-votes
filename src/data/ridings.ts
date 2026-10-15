@@ -50,6 +50,7 @@ export const RIDINGS: Riding[] = [
         { candidate: 'Andrew Harrigan', party: 'Ontario NDP', partyCode: 'NDP', votes: 5442, percent: '13.36%', elected: false },
         { candidate: 'Stephen Ciesielski', party: 'Green Party of Ontario', partyCode: 'GRN', votes: 1655, percent: '4.06%', elected: false },
         { candidate: 'Sam Mangiapane', party: 'New Blue Party', partyCode: 'NB', votes: 814, percent: '2.00%', elected: false },
+        { candidate: 'Anna Yuryeva', party: 'Moderate Party', partyCode: 'OTH', votes: 174, percent: '0.43%', elected: false },
       ]
     },
     officeAddress: '20 Bell Farm Road, Unit 5, Barrie, ON L4M 6E4',
@@ -76,6 +77,7 @@ export const RIDINGS: Riding[] = [
         { candidate: 'Tracey Lapham', party: 'Ontario NDP', partyCode: 'NDP', votes: 2710, percent: '6.73%', elected: false },
         { candidate: 'Tim Grant', party: 'Green Party of Ontario', partyCode: 'GRN', votes: 1637, percent: '4.07%', elected: false },
         { candidate: 'Alex Della Ventura', party: 'New Blue Party', partyCode: 'NB', votes: 856, percent: '2.13%', elected: false },
+        { candidate: 'Erin Patterson', party: 'Libertarian Party', partyCode: 'OTH', votes: 637, percent: '1.58%', elected: false },
       ]
     },
     officeAddress: '299 Lakeshore Drive, Suite 203, Barrie, ON L4N 7Y9',
@@ -90,11 +92,11 @@ export const RIDINGS: Riding[] = [
     role: 'Minister of Sport',
     description: 'The largest geographic riding in southern Simcoe County, stretching across Southern Georgian Bay and southern Simcoe: Collingwood, Wasaga Beach, Clearview, Essa, New Tecumseth, and Adjala-Tosorontio.',
     municipalities: ['Collingwood', 'Wasaga Beach', 'Clearview', 'Essa', 'New Tecumseth', 'Adjala-Tosorontio', 'The Blue Mountains'],
-    registeredVoters: 128450,
+    registeredVoters: 128213,
     recentElection: {
       title: '44th Ontario General Election',
       date: 'February 27, 2025',
-      turnout: '44.53%',
+      turnout: '44.80%',
       totalVotes: 57051,
       results: [
         { candidate: 'Brian Saunderson', party: 'Progressive Conservative', partyCode: 'PC', votes: 30572, percent: '53.59%', elected: true },
@@ -116,11 +118,11 @@ export const RIDINGS: Riding[] = [
     role: 'Minister of Emergency Preparedness and Response',
     description: 'Encompasses northern Simcoe County including the City of Orillia, the towns of Midland and Penetanguishene, and the townships of Tay, Tiny, Severn, Ramara, and northern Oro-Medonte.',
     municipalities: ['Orillia', 'Midland', 'Penetanguishene', 'Tay', 'Tiny', 'Severn', 'Ramara', 'Oro-Medonte (North)'],
-    registeredVoters: 104520,
+    registeredVoters: 104695,
     recentElection: {
       title: '44th Ontario General Election',
       date: 'February 27, 2025',
-      turnout: '48.36%',
+      turnout: '46.57%',
       totalVotes: 48365,
       results: [
         { candidate: 'Jill Dunlop', party: 'Progressive Conservative', partyCode: 'PC', votes: 24849, percent: '51.38%', elected: true },
@@ -128,6 +130,7 @@ export const RIDINGS: Riding[] = [
         { candidate: 'Jordi Malcolm', party: 'Ontario NDP', partyCode: 'NDP', votes: 4813, percent: '9.95%', elected: false },
         { candidate: 'Chris Carr', party: 'Green Party of Ontario', partyCode: 'GRN', votes: 3214, percent: '6.65%', elected: false },
         { candidate: 'Dave Brunelle', party: 'New Blue Party', partyCode: 'NB', votes: 1582, percent: '3.27%', elected: false },
+        { candidate: 'William Joslin', party: 'Libertarian Party', partyCode: 'OTH', votes: 579, percent: '1.20%', elected: false },
       ]
     },
     officeAddress: '575 West Street South, Unit 9, Orillia, ON L3V 5H4',
@@ -142,11 +145,11 @@ export const RIDINGS: Riding[] = [
     role: 'MPP for York—Simcoe (Elected Sept 2026)',
     description: 'Encompasses the Town of Bradford West Gwillimbury in Simcoe County, alongside the Town of Georgina and parts of East Gwillimbury in York Region. Succeeded Caroline Mulroney in a 2026 by-election.',
     municipalities: ['Bradford West Gwillimbury', 'Georgina', 'East Gwillimbury (North)'],
-    registeredVoters: 91400,
+    registeredVoters: 109883,
     recentElection: {
       title: 'Provincial By-Election (Post-Mulroney Resignation)',
       date: 'September 3, 2026',
-      turnout: '25.24%',
+      turnout: '21.00%',
       totalVotes: 23070,
       results: [
         { candidate: 'Susan Lahey', party: 'Progressive Conservative', partyCode: 'PC', votes: 11491, percent: '49.81%', elected: true },
@@ -154,9 +157,11 @@ export const RIDINGS: Riding[] = [
         { candidate: 'Bobby (Babak) Nikmard', party: 'Ontario NDP', partyCode: 'NDP', votes: 974, percent: '4.22%', elected: false },
         { candidate: 'Matt Pearce', party: 'Green Party of Ontario', partyCode: 'GRN', votes: 642, percent: '2.78%', elected: false },
         { candidate: 'Sean Conroy', party: 'Ontario Libertarian Party', partyCode: 'OTH', votes: 394, percent: '1.71%', elected: false },
+        { candidate: 'David Ghobrial', party: 'New Blue Party', partyCode: 'NB', votes: 383, percent: '1.66%', elected: false },
+        { candidate: 'Gerald Auger', party: 'Ontario Party', partyCode: 'OTH', votes: 244, percent: '1.06%', elected: false },
       ]
     },
-    officeAddress: '45 Grist Mill Road, Unit 8, Keswick, ON L4P 3E9',
+    officeAddress: '45 Grist Mill Road, Unit 9, Holland Landing, ON L9N 1M7',
     officePhone: '905-895-1555'
   }
 ];

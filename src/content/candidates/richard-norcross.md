@@ -13,7 +13,7 @@ phone: 705-435-3900
 image: /images/candidates/richard-norcross.webp
 ---
 
-**Richard Norcross** is the **Mayor of the Town of New Tecumseth**, serving as Mayor since 2018 and re-elected in October 2022. He previously served as Deputy Mayor and councillor representing Ward 6 (Beeton/rural).
+**Richard Norcross** is the **Mayor of the Town of New Tecumseth**, elected Mayor in October 2022. He previously served as Deputy Mayor from 2018 and as councillor representing Ward 6 (Beeton/rural).
 
 ### Key Roles & Responsibilities
 * **County of Simcoe Council**: Long-time member of County Council representing South Simcoe communities (Alliston, Beeton, Tottenham).

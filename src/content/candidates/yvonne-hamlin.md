@@ -1,5 +1,5 @@
 ---
-name: Yvonne Hamelin
+name: Yvonne Hamlin
 position: Mayor of Collingwood
 riding: Simcoe—Grey
 municipality: Collingwood
@@ -8,7 +8,7 @@ elected: true
 website: https://www.collingwood.ca/governance-engagement/council-representation/mayor-yvonne-hamlin
 email: officeofthemayor@collingwood.ca
 phone: 705-445-1030 ext. 8000
-image: /images/candidates/yvonne-hamelin.jpg
+image: /images/candidates/yvonne-hamlin.jpg
 incumbent: true
 ---
 

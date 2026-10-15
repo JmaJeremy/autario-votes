@@ -8,8 +8,8 @@ role: Former President of the Treasury Board & Minister of Francophone Affairs
 incumbent: false
 elected: false
 election: 44th Ontario General Election (February 27, 2025)
-votes: 21850
-votePercent: 56.4%
+votes: 24705
+votePercent: 59.40%
 website: https://www.ola.org/en/members/all/caroline-mulroney
 image: /images/candidates/caroline-mulroney.jpg
 ---

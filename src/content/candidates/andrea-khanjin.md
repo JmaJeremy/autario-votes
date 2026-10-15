@@ -27,7 +27,7 @@ She serves as Ontario's **Minister of Red Tape Reduction** in Premier Doug Ford'
 * **Parliamentary Assistant to the Minister of the Environment, Conservation and Parks** (2019–2023)
 
 ### Background & Community
-Andrea immigrated to Canada with her grandparents from the Soviet Union following the Chernobyl nuclear disaster. Growing up in Barrie, she attended local schools and earned a Bachelor of Arts in Political Science from the University of Ottawa.
+Andrea's family fled the Soviet Union amid its collapse and antisemitic persecution, first to Cuba, then to Canada. Growing up in Barrie, she attended local schools and earned a Bachelor of Arts in Political Science from the University of Ottawa.
 
 Before her election as MPP, Khanjin served for over a decade in various policy, communications, and advisory roles within the federal government, including working alongside key cabinet ministers.
 

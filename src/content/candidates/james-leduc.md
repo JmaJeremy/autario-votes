@@ -13,7 +13,7 @@ phone: 905-775-5366
 image: /images/candidates/james-leduc.jpg
 ---
 
-**James Leduc** is the **Mayor of the Town of Bradford West Gwillimbury (BWG)**, elected to the mayoral office in October 2022 after previously serving two terms as Deputy Mayor and as Ward 5 Councillor.
+**James Leduc** is the **Mayor of the Town of Bradford West Gwillimbury (BWG)**, elected to the mayoral office in October 2022 after previously serving two terms as Deputy Mayor, and before that as Ward 2 Councillor (2006–2010) and Ward 6 Councillor (2010–2014).
 
 ### Key Roles & Initiatives
 * **County of Simcoe Council**: Active member of County Council advocating for regional highway connections and affordable housing in South Simcoe.

@@ -25,9 +25,9 @@ votePercent: 49.88%
 As Attorney General, Downey has spearheaded major justice sector modernizations in Ontario, including digitizing provincial court operations, expanding digital filing systems, appointing judges to address caseload backlogs, and modernizing legal aid.
 
 ### Background & Career
-Born in Bond Head in South Simcoe, Downey graduated from Wilfrid Laurier University, Dalhousie University (Law), and Osgoode Hall Law School (Master of Laws in Municipal Law). Before his provincial political career, Downey was a practicing partner at Downey, Toth LLP in Orillia, specializing in real estate, business, and municipal law.
+Born in Bond Head in South Simcoe, Downey graduated from Wilfrid Laurier University, Dalhousie University (Law), and Osgoode Hall Law School (Master of Laws in Municipal Law). Before his provincial political career, Downey was a practicing partner at Downey, Tornosky, Lassaline & Timpano in Orillia, specializing in real estate, business, and municipal law.
 
-He also served as a Town Councillor in Orillia from 2000 to 2003 and taught law at Laurentian University.
+He also served as a Town Councillor in Orillia from 2000 to 2006 and taught law at Laurentian University.
 
 ### Key Community Priorities
 * Accelerating infrastructure along the Highway 400 corridor through Springwater and Oro-Medonte.

@@ -6,7 +6,7 @@ riding: Barrie—Springwater—Oro-Medonte
 level: municipal
 incumbent: true
 elected: true
-role: Deputy Warden of Simcoe County (2023–2026)
+role: Deputy Warden of Simcoe County (2023–2024; Acclaimed for Second Term, 2025–2026)
 website: https://www.springwater.ca
 phone: 705-728-4784
 ---
